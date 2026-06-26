@@ -301,13 +301,6 @@
             border-radius: 5px
         }
 
-        .btn-icon-only {
-            width: 30px;
-            height: 30px;
-            padding: 0;
-            min-height: auto
-        }
-
         .add-btn-row {
             display: flex;
             gap: 6px;
@@ -587,10 +580,15 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, .25);
             max-height: 85vh;
             max-height: 85dvh;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
             transition: background var(--transition);
+        }
+
+        .modal-body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            min-height: 0;
         }
 
         .modal h2 {
@@ -705,10 +703,8 @@
         }
 
         .add-pair-form .suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            z-index: 200;
+            position: fixed;
+            z-index: 300;
             background: var(--modal-bg);
             border: 1px solid var(--border);
             border-radius: 0 0 7px 7px;
@@ -716,6 +712,7 @@
             overflow-y: auto;
             display: none;
             min-width: 140px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, .15);
         }
 
         .add-pair-form .suggestions.open {
@@ -788,8 +785,8 @@
             <h1>&#x1F4B1; Currency Converter <span class="rate-badge" id="rateBadge" style="display:none"></span></h1>
 
             <div class="input-row">
-                <input type="number" class="amount-input" id="amountInput" placeholder="Amount..." step="any"
-                    inputmode="decimal" autofocus>
+                <input type="text" class="amount-input" id="amountInput" placeholder="Amount..." inputmode="decimal"
+                    pattern="[0-9]*\.?[0-9]*" autocomplete="off" autofocus>
                 <select class="currency-select" id="fromCurrency" aria-label="From"></select>
                 <button class="swap-btn-inline" id="swapBtnInline" title="Swap" aria-label="Swap">&#x21C4;</button>
                 <select class="currency-select" id="toCurrency" aria-label="To"></select>
@@ -812,8 +809,8 @@
                 <h2>&#x1F4CB; History</h2>
                 <div class="header-actions">
                     <span class="count" id="historyCount">0</span>
-                    <button class="btn btn-danger btn-icon-only" id="clearHistoryBtn"
-                        title="Delete all history">&#x1F5D1;</button>
+                    <button class="btn btn-danger btn-xs" id="clearHistoryBtn" title="Delete all history">&#x2715;
+                        Clear</button>
                 </div>
             </div>
             <div class="history-list" id="historyList">
@@ -833,64 +830,66 @@
     <div class="modal-overlay hidden" id="settingsModal">
         <div class="modal">
             <h2>&#x2699;&#xFE0F; Settings</h2>
+            <div class="modal-body">
 
-            <div class="settings-section">
-                <h3>Auto-add</h3>
-                <div class="settings-row">
-                    <div>
-                        <div class="set-label">Auto-add to history</div>
-                        <div class="set-desc">Automatically add entry after 3s of inactivity</div>
-                    </div>
-                    <label class="toggle">
-                        <input type="checkbox" id="autoAddToggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h3>Fee / Markup</h3>
-                <div class="settings-row">
-                    <div>
-                        <div class="set-label">Fee amount</div>
-                        <div class="set-desc">Added to converted amount (e.g. bank fee)</div>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:4px;">
-                        <input type="number" id="feePercent" value="0" step="0.1" min="0" placeholder="0">
-                        <span class="fee-unit">%</span>
+                <div class="settings-section">
+                    <h3>Auto-add</h3>
+                    <div class="settings-row">
+                        <div>
+                            <div class="set-label">Auto-add to history</div>
+                            <div class="set-desc">Automatically add entry after 3s of inactivity</div>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="autoAddToggle" checked>
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
-                <div class="settings-row">
-                    <div class="set-label">Apply to auto-rate pairs</div>
-                    <label class="toggle">
-                        <input type="checkbox" id="feeAutoToggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="settings-row">
-                    <div class="set-label">Apply to manual-rate pairs</div>
-                    <label class="toggle">
-                        <input type="checkbox" id="feeManualToggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
 
-            <div class="settings-section">
-                <h3>Data</h3>
-                <div class="settings-row">
-                    <div class="set-label">Refresh exchange rates</div>
-                    <button class="btn btn-ghost btn-small" id="refreshRatesSettingsBtn">&#x1F310; Update</button>
+                <div class="settings-section">
+                    <h3>Fee / Markup</h3>
+                    <div class="settings-row">
+                        <div>
+                            <div class="set-label">Fee amount</div>
+                            <div class="set-desc">Added to converted amount (e.g. bank fee)</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:4px;">
+                            <input type="number" id="feePercent" value="0" step="0.1" min="0" placeholder="0">
+                            <span class="fee-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="settings-row">
+                        <div class="set-label">Apply to auto-rate pairs</div>
+                        <label class="toggle">
+                            <input type="checkbox" id="feeAutoToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="settings-row">
+                        <div class="set-label">Apply to manual-rate pairs</div>
+                        <label class="toggle">
+                            <input type="checkbox" id="feeManualToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
-                <div class="settings-row">
-                    <div class="set-label">Export all data</div>
-                    <button class="btn btn-ghost btn-small" id="exportSettingsBtn">&#x1F4E4; Export</button>
+
+                <div class="settings-section">
+                    <h3>Data</h3>
+                    <div class="settings-row">
+                        <div class="set-label">Refresh exchange rates</div>
+                        <button class="btn btn-ghost btn-small" id="refreshRatesSettingsBtn">&#x1F310; Update</button>
+                    </div>
+                    <div class="settings-row">
+                        <div class="set-label">Export all data</div>
+                        <button class="btn btn-ghost btn-small" id="exportSettingsBtn">&#x1F4E4; Export</button>
+                    </div>
+                    <div class="settings-row">
+                        <div class="set-label">Import data</div>
+                        <button class="btn btn-ghost btn-small" id="importSettingsBtn">&#x1F4E5; Import</button>
+                    </div>
                 </div>
-                <div class="settings-row">
-                    <div class="set-label">Import data</div>
-                    <button class="btn btn-ghost btn-small" id="importSettingsBtn">&#x1F4E5; Import</button>
-                </div>
-            </div>
+            </div><!-- /modal-body -->
 
             <div class="modal-actions">
                 <button class="btn btn-ghost btn-small" id="closeSettingsModal">Close</button>
@@ -902,29 +901,31 @@
     <div class="modal-overlay hidden" id="pairsModal">
         <div class="modal">
             <h2>&#x1F504; Currency Pairs</h2>
-            <div id="dupWarningBox"></div>
-            <div class="pair-list" id="pairList"></div>
-            <div class="add-pair-form">
-                <div class="cc-wrapper">
-                    <input type="text" class="cc" id="newFrom" placeholder="EUR" maxlength="5" autocomplete="off">
-                    <div class="suggestions" id="sugFrom"></div>
+            <div class="modal-body">
+                <div id="dupWarningBox"></div>
+                <div class="pair-list" id="pairList"></div>
+                <div class="add-pair-form">
+                    <div class="cc-wrapper">
+                        <input type="text" class="cc" id="newFrom" placeholder="EUR" maxlength="5" autocomplete="off">
+                        <div class="suggestions" id="sugFrom"></div>
+                    </div>
+                    <span class="arr">&rarr;</span>
+                    <div class="cc-wrapper">
+                        <input type="text" class="cc" id="newTo" placeholder="SEK" maxlength="5" autocomplete="off">
+                        <div class="suggestions" id="sugTo"></div>
+                    </div>
+                    <span>=</span>
+                    <input type="number" class="fac" id="newFactor" placeholder="Factor" step="any" min="0.000001">
+                    <div class="toggle-row" style="margin:0;gap:4px;">
+                        <label class="toggle" style="width:34px;height:20px;">
+                            <input type="checkbox" id="newAutoMode" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span class="toggle-label" style="font-size:.72rem;">Auto</span>
+                    </div>
+                    <button class="btn btn-primary btn-small" id="addPairBtn">Add</button>
                 </div>
-                <span class="arr">&rarr;</span>
-                <div class="cc-wrapper">
-                    <input type="text" class="cc" id="newTo" placeholder="SEK" maxlength="5" autocomplete="off">
-                    <div class="suggestions" id="sugTo"></div>
-                </div>
-                <span>=</span>
-                <input type="number" class="fac" id="newFactor" placeholder="Factor" step="any" min="0.000001">
-                <div class="toggle-row" style="margin:0;gap:4px;">
-                    <label class="toggle" style="width:34px;height:20px;">
-                        <input type="checkbox" id="newAutoMode" checked>
-                        <span class="slider"></span>
-                    </label>
-                    <span class="toggle-label" style="font-size:.72rem;">Auto</span>
-                </div>
-                <button class="btn btn-primary btn-small" id="addPairBtn">Add</button>
-            </div>
+            </div><!-- /modal-body -->
             <div class="modal-actions">
                 <button class="btn btn-ghost btn-small" id="closePairsModal">Close</button>
             </div>
@@ -1153,6 +1154,24 @@
             var fetchingRates = false;
 
             function isECBCurrency(code) { return !!ECB_CURRENCIES[code]; }
+
+            // Fetch available currency list from ECB API (merges with hardcoded fallback)
+            function fetchAvailableCurrencies() {
+                var url = 'https://data-api.ecb.europa.eu/service/data/EXR/D..EUR.SP00.A?format=jsondata&lastNObservations=1';
+                fetch(url).then(function (r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                }).then(function (data) {
+                    try {
+                        var seriesKeys = Object.keys(data.structure.dimensions.series[1].values);
+                        seriesKeys.forEach(function (code) {
+                            if (code !== 'EUR' && !ECB_CURRENCIES[code]) {
+                                ECB_CURRENCIES[code] = code;
+                            }
+                        });
+                    } catch (e) { /* keep hardcoded list */ }
+                }).catch(function () { /* keep hardcoded list */ });
+            }
 
             function fetchECBRate(currency, callback) {
                 currency = currency.toUpperCase();
@@ -1479,6 +1498,13 @@
                 dropdown.innerHTML = matches.map(function (c) {
                     return '<div class="sug-item" data-code="' + c + '"><span class="sug-code">' + c + '</span><span class="sug-name">' + ECB_CURRENCIES[c] + '</span></div>';
                 }).join('');
+
+                // Position the dropdown fixed below the input
+                var rect = input.getBoundingClientRect();
+                dropdown.style.left = rect.left + 'px';
+                dropdown.style.top = rect.bottom + 'px';
+                dropdown.style.width = Math.max(rect.width, 140) + 'px';
+
                 dropdown.classList.add('open');
                 dropdown.querySelectorAll('.sug-item').forEach(function (item) {
                     item.addEventListener('mousedown', function (e) {
@@ -1704,6 +1730,17 @@
             amountInput.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') { e.preventDefault(); clearAutoAddTimer(); addToHistory(false); }
             });
+            // On mobile, "Next" / Done button blurs the input without Enter.
+            // Wait a tick so button/dropdown clicks fire first, then add if still unadded.
+            amountInput.addEventListener('blur', function () {
+                setTimeout(function () {
+                    var amt = parseFloat(amountInput.value);
+                    if (!isNaN(amt) && amt > 0 && !isAlreadyInHistory() && !addHistoryBtn.disabled) {
+                        clearAutoAddTimer();
+                        addToHistory(false);
+                    }
+                }, 150);
+            });
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
                     if (!pairsModal.classList.contains('hidden')) closePairsModalFn();
@@ -1731,6 +1768,9 @@
             if (hasAuto) {
                 setTimeout(function () { fetchAllECBRates(); }, 500);
             }
+
+            // Fetch available currencies from ECB API (updates suggestion list)
+            setTimeout(function () { fetchAvailableCurrencies(); }, 200);
         })();
     </script>
 
