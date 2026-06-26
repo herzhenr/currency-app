@@ -785,8 +785,8 @@
             <h1>&#x1F4B1; Currency Converter <span class="rate-badge" id="rateBadge" style="display:none"></span></h1>
 
             <div class="input-row">
-                <input type="text" class="amount-input" id="amountInput" placeholder="Amount..." inputmode="decimal"
-                    pattern="[0-9]*\.?[0-9]*" autocomplete="off" autofocus>
+                <input type="number" class="amount-input" id="amountInput" placeholder="Amount..." step="any"
+                    enterkeyhint="go" autocomplete="off" autofocus>
                 <select class="currency-select" id="fromCurrency" aria-label="From"></select>
                 <button class="swap-btn-inline" id="swapBtnInline" title="Swap" aria-label="Swap">&#x21C4;</button>
                 <select class="currency-select" id="toCurrency" aria-label="To"></select>
