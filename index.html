@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Currency Converter</title>
+    <meta name="description" content="Offline currency converter with live ECB exchange rates">
+    <meta name="theme-color" content="#4f6ef7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Currency">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💱%3C/text%3E%3C/svg%3E">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #f0f2f5;
+            --card-bg: #fff;
+            --text: #111827;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --input-bg: #f9fafb;
+            --accent: #4f6ef7;
+            --accent-hover: #3d57db;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --warning-bg: #fef3c7;
+            --warning-text: #92400e;
+            --success: #10b981;
+            --success-bg: #d1fae5;
+            --shadow: 0 1px 3px rgba(0, 0, 0, .08);
+            --radius: 10px;
+            --transition: .2s ease;
+            --row-hover: #f3f4f6;
+            --badge-bg: #e5e7eb;
+            --overlay: rgba(0, 0, 0, .4);
+            --modal-bg: #fff;
+            --btn-ghost-bg: #e5e7eb;
+            --input-border: #d1d5db;
+            --toggle-bg: #d1d5db;
+            --toggle-active: #4f6ef7;
+        }
+
+        .dark {
+            --bg: #0f1117;
+            --card-bg: #1a1d27;
+            --text: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --border: #2d3148;
+            --input-bg: #212433;
+            --accent: #6b8aff;
+            --accent-hover: #8ea5ff;
+            --danger: #f87171;
+            --danger-hover: #ef4444;
+            --warning-bg: #292112;
+            --warning-text: #fcd34d;
+            --success: #34d399;
+            --success-bg: #064e3b;
+            --shadow: 0 1px 3px rgba(0, 0, 0, .3);
+            --row-hover: #242838;
+            --badge-bg: #2d3148;
+            --overlay: rgba(0, 0, 0, .65);
+            --modal-bg: #1a1d27;
+            --btn-ghost-bg: #2a2d3a;
+            --input-border: #3a3f5c;
+            --toggle-bg: #3a3f5c;
+            --toggle-active: #6b8aff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            padding: 12px 10px 90px;
+            transition: background var(--transition), color var(--transition);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: background var(--transition), border var(--transition);
+        }
+
+        h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        h1 .rate-badge {
+            font-size: .65rem;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 5px;
+            align-items: stretch
+        }
+
+        .amount-input {
+            flex: 1 1 55px;
+            min-width: 45px;
+            height: 42px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0 10px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text);
+            outline: none;
+            transition: border var(--transition), background var(--transition);
+        }
+
+        .amount-input:focus {
+            border-color: var(--accent)
+        }
+
+        .amount-input::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+            font-size: .9rem
+        }
+
+        .currency-select {
+            flex: 1 1 50px;
+            min-width: 42px;
+            height: 42px;
+            font-size: .82rem;
+            font-weight: 600;
+            padding: 0 22px 0 7px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text);
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 5px center;
+            transition: border var(--transition), background var(--transition);
+        }
+
+        .currency-select:focus {
+            border-color: var(--accent)
+        }
+
+        .swap-btn-inline {
+            flex-shrink: 0;
+            width: 34px;
+            height: 42px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--transition), border var(--transition);
+        }
+
+        .swap-btn-inline:active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent)
+        }
+
+        .conversion {
+            margin-top: 7px;
+            display: flex;
+            gap: 5px
+        }
+
+        .conv-cell {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 8px;
+            background: var(--input-bg);
+            border-radius: 7px;
+            font-size: .85rem;
+            transition: background var(--transition);
+            text-align: center;
+            flex-wrap: wrap;
+        }
+
+        .conv-cell .conv-desc {
+            font-weight: 600;
+            color: var(--accent);
+            white-space: nowrap
+        }
+
+        .conv-cell .conv-val {
+            font-weight: 700
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 9px 12px;
+            font-size: .82rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background var(--transition), opacity var(--transition), transform .1s;
+            white-space: nowrap;
+            min-height: 38px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(.96)
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            pointer-events: none
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover)
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover)
+        }
+
+        .btn-ghost {
+            background: var(--btn-ghost-bg);
+            color: var(--text)
+        }
+
+        .btn-ghost:hover {
+            background: var(--border)
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: .75rem;
+            min-height: 30px;
+            border-radius: 6px
+        }
+
+        .btn-xs {
+            padding: 3px 7px;
+            font-size: .68rem;
+            min-height: 24px;
+            border-radius: 5px
+        }
+
+        .btn-icon-only {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            min-height: auto
+        }
+
+        .add-btn-row {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            align-items: center
+        }
+
+        .add-btn-row .btn-primary {
+            flex: 1
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px
+        }
+
+        .history-header h2 {
+            font-size: .95rem;
+            font-weight: 600
+        }
+
+        .history-header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px
+        }
+
+        .history-header .count {
+            font-size: .7rem;
+            color: var(--text-secondary);
+            background: var(--badge-bg);
+            padding: 2px 9px;
+            border-radius: 20px
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            max-height: 350px;
+            overflow-y: auto
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 8px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: border var(--transition), background var(--transition);
+            font-size: .78rem;
+        }
+
+        .history-item:hover {
+            background: var(--row-hover)
+        }
+
+        .history-item .entry {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap
+        }
+
+        .history-item .entry .hist-amount {
+            font-weight: 700;
+            white-space: nowrap
+        }
+
+        .history-item .entry .hist-from {
+            font-weight: 600;
+            color: var(--accent);
+            white-space: nowrap
+        }
+
+        .history-item .entry .hist-arrow {
+            color: var(--text-secondary);
+            font-size: .7rem;
+            margin: 0 1px
+        }
+
+        .history-item .entry .hist-to {
+            font-weight: 600;
+            white-space: nowrap
+        }
+
+        .history-item .entry .hist-divider {
+            color: var(--text-secondary);
+            margin: 0 2px;
+            font-size: .65rem
+        }
+
+        .history-item .entry .hist-rev {
+            font-size: .72rem;
+            color: var(--text-secondary);
+            white-space: nowrap
+        }
+
+        .history-item .timestamp {
+            font-size: .6rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            margin-left: auto
+        }
+
+        .del-btn {
+            flex-shrink: 0
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 20px 0;
+            font-size: .8rem
+        }
+
+        .bottom-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            padding: 4px 0
+        }
+
+        /* Toggle switch */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0
+        }
+
+        .toggle-label {
+            font-size: .8rem;
+            font-weight: 500
+        }
+
+        .toggle {
+            position: relative;
+            width: 42px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0
+        }
+
+        .toggle .slider {
+            position: absolute;
+            inset: 0;
+            background: var(--toggle-bg);
+            border-radius: 24px;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .toggle .slider::before {
+            content: '';
+            position: absolute;
+            left: 3px;
+            top: 3px;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform var(--transition);
+        }
+
+        .toggle input:checked+.slider {
+            background: var(--toggle-active)
+        }
+
+        .toggle input:checked+.slider::before {
+            transform: translateX(18px)
+        }
+
+        .toggle input:disabled+.slider {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        /* Settings modal */
+        .settings-section {
+            margin-bottom: 12px
+        }
+
+        .settings-section h3 {
+            font-size: .82rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--accent)
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            gap: 10px;
+        }
+
+        .settings-row .set-label {
+            font-size: .82rem;
+            font-weight: 500
+        }
+
+        .settings-row .set-desc {
+            font-size: .68rem;
+            color: var(--text-secondary)
+        }
+
+        .settings-row input[type=number] {
+            width: 70px;
+            height: 32px;
+            padding: 0 6px;
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: .78rem;
+            outline: none;
+            text-align: right;
+        }
+
+        .settings-row input[type=number]:focus {
+            border-color: var(--accent)
+        }
+
+        .settings-row .fee-unit {
+            font-size: .75rem;
+            color: var(--text-secondary);
+            margin-left: 2px
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 16px;
+            animation: fadeIn .15s ease;
+        }
+
+        .modal-overlay.hidden {
+            display: none
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .modal {
+            background: var(--modal-bg);
+            border-radius: var(--radius);
+            padding: 16px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .25);
+            max-height: 85vh;
+            max-height: 85dvh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: background var(--transition);
+        }
+
+        .modal h2 {
+            font-size: 1rem;
+            margin-bottom: 8px
+        }
+
+        .modal .pair-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 10px
+        }
+
+        .pair-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 8px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: .8rem;
+            flex-wrap: wrap;
+        }
+
+        .pair-row .pair-label {
+            flex: 1;
+            font-weight: 600;
+            min-width: 0
+        }
+
+        .pair-row .pair-mode {
+            font-size: .65rem;
+            padding: 1px 6px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .pair-row .pair-mode.manual {
+            background: var(--warning-bg);
+            color: var(--warning-text)
+        }
+
+        .pair-row .pair-mode.auto {
+            background: var(--success-bg);
+            color: var(--success)
+        }
+
+        .pair-row .pair-factor {
+            color: var(--text-secondary);
+            font-size: .75rem
+        }
+
+        .pair-row input.edit-factor {
+            width: 65px;
+            height: 28px;
+            padding: 0 5px;
+            border: 2px solid var(--accent);
+            border-radius: 5px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: .75rem;
+            outline: none;
+        }
+
+        .add-pair-form {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            align-items: center
+        }
+
+        .add-pair-form .cc-wrapper {
+            position: relative;
+            flex: 1 1 60px;
+            min-width: 50px
+        }
+
+        .add-pair-form input {
+            height: 36px;
+            padding: 0 8px;
+            border: 2px solid var(--input-border);
+            border-radius: 7px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: .82rem;
+            outline: none;
+            transition: border var(--transition);
+            min-width: 0;
+            width: 100%;
+        }
+
+        .add-pair-form input:focus {
+            border-color: var(--accent)
+        }
+
+        .add-pair-form input.cc {
+            text-transform: uppercase
+        }
+
+        .add-pair-form input.fac {
+            width: 75px;
+            flex-shrink: 1
+        }
+
+        .add-pair-form .arr {
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: .85rem
+        }
+
+        .add-pair-form .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 200;
+            background: var(--modal-bg);
+            border: 1px solid var(--border);
+            border-radius: 0 0 7px 7px;
+            max-height: 140px;
+            overflow-y: auto;
+            display: none;
+            min-width: 140px;
+        }
+
+        .add-pair-form .suggestions.open {
+            display: block
+        }
+
+        .add-pair-form .suggestions .sug-item {
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: .78rem;
+            font-weight: 500;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .add-pair-form .suggestions .sug-item:hover {
+            background: var(--accent);
+            color: #fff
+        }
+
+        .add-pair-form .suggestions .sug-item .sug-code {
+            font-weight: 700
+        }
+
+        .add-pair-form .suggestions .sug-item .sug-name {
+            color: var(--text-secondary);
+            font-size: .7rem;
+            margin-left: 4px
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 8px
+        }
+
+        .dup-warning {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: .75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+        <div class="card">
+            <h1>&#x1F4B1; Currency Converter <span class="rate-badge" id="rateBadge" style="display:none"></span></h1>
+
+            <div class="input-row">
+                <input type="number" class="amount-input" id="amountInput" placeholder="Amount..." step="any"
+                    inputmode="decimal" autofocus>
+                <select class="currency-select" id="fromCurrency" aria-label="From"></select>
+                <button class="swap-btn-inline" id="swapBtnInline" title="Swap" aria-label="Swap">&#x21C4;</button>
+                <select class="currency-select" id="toCurrency" aria-label="To"></select>
+            </div>
+
+            <div class="conversion" id="conversionDisplay" style="display:none">
+                <div class="conv-cell"><span class="conv-desc" id="forwardDesc"></span>&nbsp;<span class="conv-val"
+                        id="forwardVal"></span></div>
+                <div class="conv-cell"><span class="conv-desc" id="reverseDesc"></span>&nbsp;<span class="conv-val"
+                        id="reverseVal"></span></div>
+            </div>
+
+            <div class="add-btn-row">
+                <button class="btn btn-primary" id="addHistoryBtn">Add to History</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="history-header">
+                <h2>&#x1F4CB; History</h2>
+                <div class="header-actions">
+                    <span class="count" id="historyCount">0</span>
+                    <button class="btn btn-danger btn-icon-only" id="clearHistoryBtn"
+                        title="Delete all history">&#x1F5D1;</button>
+                </div>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-state">No conversions yet. Enter an amount above.</div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <button class="btn btn-ghost btn-small" id="themeBtn">&#x1F313; Auto</button>
+            <button class="btn btn-ghost btn-small" id="settingsBtn">&#x2699;&#xFE0F; Settings</button>
+            <button class="btn btn-ghost btn-small" id="managePairsBtn">&#x1F504; Pairs</button>
+            <input type="file" id="importFileInput" accept=".json" style="display:none">
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay hidden" id="settingsModal">
+        <div class="modal">
+            <h2>&#x2699;&#xFE0F; Settings</h2>
+
+            <div class="settings-section">
+                <h3>Auto-add</h3>
+                <div class="settings-row">
+                    <div>
+                        <div class="set-label">Auto-add to history</div>
+                        <div class="set-desc">Automatically add entry after 3s of inactivity</div>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" id="autoAddToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Fee / Markup</h3>
+                <div class="settings-row">
+                    <div>
+                        <div class="set-label">Fee amount</div>
+                        <div class="set-desc">Added to converted amount (e.g. bank fee)</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                        <input type="number" id="feePercent" value="0" step="0.1" min="0" placeholder="0">
+                        <span class="fee-unit">%</span>
+                    </div>
+                </div>
+                <div class="settings-row">
+                    <div class="set-label">Apply to auto-rate pairs</div>
+                    <label class="toggle">
+                        <input type="checkbox" id="feeAutoToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="settings-row">
+                    <div class="set-label">Apply to manual-rate pairs</div>
+                    <label class="toggle">
+                        <input type="checkbox" id="feeManualToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Data</h3>
+                <div class="settings-row">
+                    <div class="set-label">Refresh exchange rates</div>
+                    <button class="btn btn-ghost btn-small" id="refreshRatesSettingsBtn">&#x1F310; Update</button>
+                </div>
+                <div class="settings-row">
+                    <div class="set-label">Export all data</div>
+                    <button class="btn btn-ghost btn-small" id="exportSettingsBtn">&#x1F4E4; Export</button>
+                </div>
+                <div class="settings-row">
+                    <div class="set-label">Import data</div>
+                    <button class="btn btn-ghost btn-small" id="importSettingsBtn">&#x1F4E5; Import</button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-ghost btn-small" id="closeSettingsModal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pairs Modal -->
+    <div class="modal-overlay hidden" id="pairsModal">
+        <div class="modal">
+            <h2>&#x1F504; Currency Pairs</h2>
+            <div id="dupWarningBox"></div>
+            <div class="pair-list" id="pairList"></div>
+            <div class="add-pair-form">
+                <div class="cc-wrapper">
+                    <input type="text" class="cc" id="newFrom" placeholder="EUR" maxlength="5" autocomplete="off">
+                    <div class="suggestions" id="sugFrom"></div>
+                </div>
+                <span class="arr">&rarr;</span>
+                <div class="cc-wrapper">
+                    <input type="text" class="cc" id="newTo" placeholder="SEK" maxlength="5" autocomplete="off">
+                    <div class="suggestions" id="sugTo"></div>
+                </div>
+                <span>=</span>
+                <input type="number" class="fac" id="newFactor" placeholder="Factor" step="any" min="0.000001">
+                <div class="toggle-row" style="margin:0;gap:4px;">
+                    <label class="toggle" style="width:34px;height:20px;">
+                        <input type="checkbox" id="newAutoMode" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span class="toggle-label" style="font-size:.72rem;">Auto</span>
+                </div>
+                <button class="btn btn-primary btn-small" id="addPairBtn">Add</button>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-ghost btn-small" id="closePairsModal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            'use strict';
+
+            var $ = function (s) { return document.querySelector(s); };
+
+            var amountInput = $('#amountInput'), fromCurrency = $('#fromCurrency'), toCurrency = $('#toCurrency'),
+                swapBtnInline = $('#swapBtnInline'), conversionDisplay = $('#conversionDisplay'),
+                forwardDesc = $('#forwardDesc'), forwardVal = $('#forwardVal'),
+                reverseDesc = $('#reverseDesc'), reverseVal = $('#reverseVal'),
+                addHistoryBtn = $('#addHistoryBtn'), rateBadge = $('#rateBadge'),
+                historyList = $('#historyList'), historyCount = $('#historyCount'),
+                clearHistoryBtn = $('#clearHistoryBtn'),
+                themeBtn = $('#themeBtn'), settingsBtn = $('#settingsBtn'),
+                settingsModal = $('#settingsModal'), autoAddToggle = $('#autoAddToggle'),
+                feePercent = $('#feePercent'), feeAutoToggle = $('#feeAutoToggle'), feeManualToggle = $('#feeManualToggle'),
+                refreshRatesSettingsBtn = $('#refreshRatesSettingsBtn'),
+                exportSettingsBtn = $('#exportSettingsBtn'), importSettingsBtn = $('#importSettingsBtn'),
+                closeSettingsModal = $('#closeSettingsModal'),
+                managePairsBtn = $('#managePairsBtn'), importFileInput = $('#importFileInput'),
+                pairsModal = $('#pairsModal'), pairList = $('#pairList'), dupWarningBox = $('#dupWarningBox'),
+                newFrom = $('#newFrom'), newTo = $('#newTo'), newFactor = $('#newFactor'),
+                newAutoMode = $('#newAutoMode'), addPairBtn = $('#addPairBtn'),
+                closePairsModal = $('#closePairsModal'),
+                sugFrom = $('#sugFrom'), sugTo = $('#sugTo');
+
+            var STORAGE_PAIRS = 'currency_app_pairs_v3';
+            var STORAGE_HISTORY = 'currency_app_history_v3';
+            var STORAGE_THEME = 'currency_app_theme';
+            var STORAGE_SETTINGS = 'currency_app_settings_v2';
+            var STORAGE_RATES_CACHE = 'currency_app_rates_cache';
+            var STORAGE_CURRENCIES = 'currency_app_currencies';
+
+            var pairs = [], history = [], currentTheme = 'system';
+            var autoAddEnabled = true;
+            var feePercentVal = 0, feeAutoEnabled = true, feeManualEnabled = true;
+            var ratesCache = {};
+            var lastSelectedFrom = 'EUR', lastSelectedTo = 'USD';
+
+            var ECB_CURRENCIES = {
+                AUD: 'Australian Dollar', BGN: 'Bulgarian Lev', BRL: 'Brazilian Real',
+                CAD: 'Canadian Dollar', CHF: 'Swiss Franc', CNY: 'Chinese Yuan',
+                CZK: 'Czech Koruna', DKK: 'Danish Krone', GBP: 'British Pound',
+                HKD: 'Hong Kong Dollar', HUF: 'Hungarian Forint', IDR: 'Indonesian Rupiah',
+                ILS: 'Israeli Shekel', INR: 'Indian Rupee', ISK: 'Icelandic Krona',
+                JPY: 'Japanese Yen', KRW: 'South Korean Won', MXN: 'Mexican Peso',
+                MYR: 'Malaysian Ringgit', NOK: 'Norwegian Krone', NZD: 'New Zealand Dollar',
+                PHP: 'Philippine Peso', PLN: 'Polish Zloty', RON: 'Romanian Leu',
+                SEK: 'Swedish Krona', SGD: 'Singapore Dollar', THB: 'Thai Baht',
+                TRY: 'Turkish Lira', USD: 'US Dollar', ZAR: 'South African Rand',
+                EUR: 'Euro'
+            };
+
+            var DEFAULT_PAIRS = [
+                { from: 'EUR', to: 'USD', factor: 1.08, mode: 'auto', cachedRate: null, cachedRateDate: null }
+            ];
+
+            function migratePair(p) {
+                if (!p.mode) { p.mode = 'manual'; p.cachedRate = null; p.cachedRateDate = null; }
+                return p;
+            }
+
+            function loadPairs() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_PAIRS);
+                    if (raw) { pairs = JSON.parse(raw); if (!Array.isArray(pairs) || pairs.length === 0) pairs = DEFAULT_PAIRS.slice(); }
+                    else pairs = DEFAULT_PAIRS.slice();
+                    pairs = pairs.map(migratePair);
+                } catch (e) { pairs = DEFAULT_PAIRS.slice(); }
+            }
+            function savePairs() { localStorage.setItem(STORAGE_PAIRS, JSON.stringify(pairs)); }
+
+            function loadHistory() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_HISTORY);
+                    history = raw ? JSON.parse(raw) : [];
+                    if (!Array.isArray(history)) history = [];
+                } catch (e) { history = []; }
+            }
+            function saveHistory() { localStorage.setItem(STORAGE_HISTORY, JSON.stringify(history)); }
+
+            function loadTheme() { currentTheme = localStorage.getItem(STORAGE_THEME) || 'system'; }
+            function saveTheme() { localStorage.setItem(STORAGE_THEME, currentTheme); }
+
+            function loadSelectedCurrencies() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_CURRENCIES);
+                    if (raw) {
+                        var c = JSON.parse(raw);
+                        if (c.from) lastSelectedFrom = c.from;
+                        if (c.to) lastSelectedTo = c.to;
+                    }
+                } catch (e) { }
+            }
+            function saveSelectedCurrencies() {
+                localStorage.setItem(STORAGE_CURRENCIES, JSON.stringify({ from: fromCurrency.value, to: toCurrency.value }));
+            }
+
+            function loadSettings() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_SETTINGS);
+                    if (raw) {
+                        var s = JSON.parse(raw);
+                        if (typeof s.autoAddEnabled === 'boolean') autoAddEnabled = s.autoAddEnabled;
+                        if (typeof s.feePercent === 'number') feePercentVal = s.feePercent;
+                        if (typeof s.feeAutoEnabled === 'boolean') feeAutoEnabled = s.feeAutoEnabled;
+                        if (typeof s.feeManualEnabled === 'boolean') feeManualEnabled = s.feeManualEnabled;
+                    }
+                } catch (e) { }
+                autoAddToggle.checked = autoAddEnabled;
+                feePercent.value = feePercentVal;
+                feeAutoToggle.checked = feeAutoEnabled;
+                feeManualToggle.checked = feeManualEnabled;
+            }
+            function saveSettings() {
+                localStorage.setItem(STORAGE_SETTINGS, JSON.stringify({
+                    autoAddEnabled: autoAddEnabled,
+                    feePercent: feePercentVal,
+                    feeAutoEnabled: feeAutoEnabled,
+                    feeManualEnabled: feeManualEnabled
+                }));
+            }
+
+            function loadRatesCache() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_RATES_CACHE);
+                    if (raw) ratesCache = JSON.parse(raw);
+                } catch (e) { ratesCache = {}; }
+            }
+            function saveRatesCache() { localStorage.setItem(STORAGE_RATES_CACHE, JSON.stringify(ratesCache)); }
+
+            function applyTheme() {
+                var root = document.documentElement;
+                if (currentTheme === 'dark') root.classList.add('dark');
+                else if (currentTheme === 'light') root.classList.remove('dark');
+                else root.classList.toggle('dark', window.matchMedia('(prefers-color-scheme:dark)').matches);
+                var icons = { system: '\uD83C\uDF13', light: '\u2600\uFE0F', dark: '\uD83C\uDF19' };
+                var labels = { system: 'Auto', light: 'Light', dark: 'Dark' };
+                themeBtn.textContent = icons[currentTheme] + ' ' + labels[currentTheme];
+            }
+            function cycleTheme() {
+                var order = ['system', 'light', 'dark'];
+                currentTheme = order[(order.indexOf(currentTheme) + 1) % order.length];
+                saveTheme(); applyTheme();
+            }
+            window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function () {
+                if (currentTheme === 'system') applyTheme();
+            });
+
+            // --- Settings Modal ---
+            function openSettingsModal() { settingsModal.classList.remove('hidden'); }
+            function closeSettingsModalFn() { settingsModal.classList.add('hidden'); }
+
+            autoAddToggle.addEventListener('change', function () {
+                autoAddEnabled = this.checked;
+                saveSettings();
+                if (autoAddEnabled) resetAutoAddTimer();
+                else clearAutoAddTimer();
+            });
+            feePercent.addEventListener('input', function () {
+                feePercentVal = parseFloat(this.value) || 0;
+                if (feePercentVal < 0) feePercentVal = 0;
+                saveSettings();
+                convert();
+            });
+            feeAutoToggle.addEventListener('change', function () {
+                feeAutoEnabled = this.checked;
+                saveSettings();
+                convert();
+            });
+            feeManualToggle.addEventListener('change', function () {
+                feeManualEnabled = this.checked;
+                saveSettings();
+                convert();
+            });
+
+            // --- Auto-add timer ---
+            var autoAddTimer = null;
+            function resetAutoAddTimer() {
+                clearAutoAddTimer();
+                if (!autoAddEnabled) return;
+                autoAddTimer = setTimeout(function () {
+                    if (!addHistoryBtn.disabled && amountInput.value && parseFloat(amountInput.value) > 0) {
+                        addToHistory(true);
+                    }
+                }, 3000);
+            }
+            function clearAutoAddTimer() {
+                if (autoAddTimer) { clearTimeout(autoAddTimer); autoAddTimer = null; }
+            }
+
+            // --- Check if current conversion is already the last history entry ---
+            function isAlreadyInHistory() {
+                var amt = parseFloat(amountInput.value);
+                var from = fromCurrency.value;
+                var to = toCurrency.value;
+                if (isNaN(amt) || amt <= 0 || !from || !to) return false;
+                if (history.length === 0) return false;
+                var last = history[history.length - 1];
+                return last.fromCurrency === from && last.toCurrency === to && Math.abs(last.fromAmount - amt) < 0.001;
+            }
+
+            function updateAddButtonState() {
+                if (isAlreadyInHistory()) {
+                    addHistoryBtn.disabled = true;
+                    addHistoryBtn.textContent = 'Already added';
+                    clearAutoAddTimer();
+                } else {
+                    addHistoryBtn.disabled = false;
+                    addHistoryBtn.textContent = 'Add to History';
+                    if (autoAddEnabled && amountInput.value && parseFloat(amountInput.value) > 0) {
+                        resetAutoAddTimer();
+                    }
+                }
+            }
+
+            // --- ECB API ---
+            var ECB_BASE = 'https://data-api.ecb.europa.eu/service/data/EXR/D.';
+            var ECB_SUFFIX = '.EUR.SP00.A?format=jsondata&lastNObservations=1';
+            var fetchingRates = false;
+
+            function isECBCurrency(code) { return !!ECB_CURRENCIES[code]; }
+
+            function fetchECBRate(currency, callback) {
+                currency = currency.toUpperCase();
+                if (currency === 'EUR') { callback(null, 1); return; }
+                var now = Date.now();
+                if (ratesCache[currency] && ratesCache[currency].ts && (now - ratesCache[currency].ts) < 3600000) {
+                    callback(null, ratesCache[currency].rate);
+                    return;
+                }
+                var url = ECB_BASE + currency + ECB_SUFFIX;
+                fetch(url).then(function (r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
+                    return r.json();
+                }).then(function (data) {
+                    try {
+                        var series = Object.values(data.dataSets[0].series)[0];
+                        var obs = Object.values(series.observations)[0];
+                        var rate = parseFloat(obs[0]);
+                        ratesCache[currency] = { rate: rate, ts: now };
+                        saveRatesCache();
+                        callback(null, rate);
+                    } catch (e) { callback(e); }
+                }).catch(function (e) {
+                    if (ratesCache[currency] && ratesCache[currency].rate) {
+                        callback(null, ratesCache[currency].rate);
+                    } else {
+                        callback(e);
+                    }
+                });
+            }
+
+            function fetchAllECBRates(callback) {
+                if (fetchingRates) return;
+                fetchingRates = true;
+                rateBadge.style.display = '';
+                rateBadge.textContent = 'Updating...';
+                rateBadge.style.background = 'var(--warning-bg)';
+                rateBadge.style.color = 'var(--warning-text)';
+
+                var currencies = [];
+                pairs.forEach(function (p) {
+                    if (p.mode === 'auto') {
+                        if (isECBCurrency(p.from) && p.from !== 'EUR') currencies.push(p.from);
+                        if (isECBCurrency(p.to) && p.to !== 'EUR') currencies.push(p.to);
+                    }
+                });
+                var unique = {};
+                currencies.forEach(function (c) { unique[c] = 1; });
+                currencies = Object.keys(unique);
+
+                var pending = currencies.length;
+                if (pending === 0) { finish(); return; }
+
+                currencies.forEach(function (c) {
+                    fetchECBRate(c, function (err, rate) {
+                        pending--;
+                        if (!err && rate) { ratesCache[c] = { rate: rate, ts: Date.now() }; }
+                        if (pending === 0) finish();
+                    });
+                });
+
+                function finish() {
+                    saveRatesCache();
+                    fetchingRates = false;
+                    applyRatesToPairs();
+                    populateCurrencyDropdowns();
+                    convert();
+                    rateBadge.textContent = 'Rates updated';
+                    rateBadge.style.background = 'var(--success-bg)';
+                    rateBadge.style.color = 'var(--success)';
+                    setTimeout(function () { rateBadge.style.display = 'none'; }, 3000);
+                    if (callback) callback();
+                }
+            }
+
+            function applyRatesToPairs() {
+                pairs.forEach(function (p) {
+                    if (p.mode === 'auto' && isECBCurrency(p.from) && isECBCurrency(p.to)) {
+                        var rateFrom = 1, rateTo = 1;
+                        if (p.from === 'EUR') rateFrom = 1;
+                        else if (ratesCache[p.from] && ratesCache[p.from].rate) rateFrom = ratesCache[p.from].rate;
+                        else return;
+                        if (p.to === 'EUR') rateTo = 1;
+                        else if (ratesCache[p.to] && ratesCache[p.to].rate) rateTo = ratesCache[p.to].rate;
+                        else return;
+                        var newFactor = rateTo / rateFrom;
+                        p.factor = parseFloat(newFactor.toFixed(6));
+                        p.cachedRate = p.factor;
+                        p.cachedRateDate = Date.now();
+                    }
+                });
+                savePairs();
+            }
+
+            // --- Currency helpers ---
+            function getEffectiveFactor(fromCur, toCur) {
+                var direct = pairs.find(function (p) { return p.from === fromCur && p.to === toCur; });
+                if (direct) return applyFeeToFactor(direct.factor, direct.mode);
+                var rev = pairs.find(function (p) { return p.from === toCur && p.to === fromCur; });
+                if (rev) return applyFeeToFactor(1 / rev.factor, rev.mode);
+                return null;
+            }
+
+            function getPairMode(fromCur, toCur) {
+                var direct = pairs.find(function (p) { return p.from === fromCur && p.to === toCur; });
+                if (direct) return direct.mode || 'manual';
+                var rev = pairs.find(function (p) { return p.from === toCur && p.to === fromCur; });
+                if (rev) return rev.mode || 'manual';
+                return null;
+            }
+
+            function applyFeeToFactor(factor, mode) {
+                if (feePercentVal <= 0) return factor;
+                var apply = false;
+                if (mode === 'auto' && feeAutoEnabled) apply = true;
+                if ((mode === 'manual' || !mode) && feeManualEnabled) apply = true;
+                if (!apply) return factor;
+                return factor * (1 + feePercentVal / 100);
+            }
+
+            function getAllCurrencies() {
+                var set = {};
+                pairs.forEach(function (p) { set[p.from] = 1; set[p.to] = 1; });
+                return Object.keys(set).sort();
+            }
+
+            function populateCurrencyDropdowns() {
+                var currencies = getAllCurrencies();
+                if (currencies.length === 0) return;
+                var html = currencies.map(function (c) { return '<option value="' + c + '">' + c + '</option>'; }).join('');
+                fromCurrency.innerHTML = html;
+                toCurrency.innerHTML = html;
+
+                // Restore last selected or use defaults
+                if (currencies.indexOf(lastSelectedFrom) >= 0) fromCurrency.value = lastSelectedFrom;
+                else if (currencies.indexOf('EUR') >= 0) fromCurrency.value = 'EUR';
+                if (currencies.indexOf(lastSelectedTo) >= 0 && lastSelectedTo !== fromCurrency.value) toCurrency.value = lastSelectedTo;
+                else if (currencies.indexOf('USD') >= 0 && fromCurrency.value !== 'USD') toCurrency.value = 'USD';
+                else toCurrency.value = currencies.find(function (c) { return c !== fromCurrency.value; }) || currencies[0];
+            }
+
+            // --- Conversion ---
+            function convert() {
+                var amount = parseFloat(amountInput.value);
+                var from = fromCurrency.value;
+                var to = toCurrency.value;
+
+                saveSelectedCurrencies();
+
+                if (isNaN(amount) || amount <= 0 || !from || !to) {
+                    conversionDisplay.style.display = 'none';
+                    updateAddButtonState();
+                    return;
+                }
+                var factor = getEffectiveFactor(from, to);
+                if (factor === null) {
+                    forwardDesc.textContent = '1 ' + from + ' \u2192 ? ' + to;
+                    forwardVal.textContent = 'No rate';
+                    reverseDesc.textContent = '1 ' + to + ' \u2192 ? ' + from;
+                    reverseVal.textContent = 'No rate';
+                    conversionDisplay.style.display = '';
+                    updateAddButtonState();
+                    return;
+                }
+
+                var fwd = (amount * factor).toFixed(2);
+                var revFactor = getEffectiveFactor(to, from) || (1 / factor);
+                var rev = (amount * revFactor).toFixed(2);
+                var amt2 = amount.toFixed(2);
+
+                forwardDesc.textContent = amt2 + ' ' + from + ' =';
+                forwardVal.textContent = fwd + ' ' + to;
+                reverseDesc.textContent = amt2 + ' ' + to + ' =';
+                reverseVal.textContent = rev + ' ' + from;
+                conversionDisplay.style.display = '';
+
+                updateAddButtonState();
+            }
+
+            // --- History ---
+            function renderHistory() {
+                historyCount.textContent = history.length;
+                if (history.length === 0) {
+                    historyList.innerHTML = '<div class="empty-state">No conversions yet. Enter an amount above.</div>';
+                    return;
+                }
+                historyList.innerHTML = history.slice().reverse().map(function (e, idx) {
+                    var ri = history.length - 1 - idx;
+                    var factor = getEffectiveFactor(e.fromCurrency, e.toCurrency);
+                    var revFactor = getEffectiveFactor(e.toCurrency, e.fromCurrency);
+                    var revAmt = (revFactor && typeof e.fromAmount === 'number') ? (e.fromAmount * revFactor).toFixed(2) : '\u2014';
+                    return '<div class="history-item">'
+                        + '<div class="entry">'
+                        + '<span class="hist-amount">' + (typeof e.fromAmount === 'number' ? e.fromAmount.toFixed(2) : e.fromAmount) + '</span>'
+                        + '<span class="hist-from">' + e.fromCurrency + '</span>'
+                        + '<span class="hist-arrow">\u2192</span>'
+                        + '<span class="hist-to">' + (typeof e.toAmount === 'number' ? e.toAmount.toFixed(2) : e.toAmount) + ' ' + e.toCurrency + '</span>'
+                        + '<span class="hist-divider">|</span>'
+                        + '<span class="hist-rev">' + (typeof e.fromAmount === 'number' ? e.fromAmount.toFixed(2) : e.fromAmount) + ' ' + e.toCurrency + ' \u2192 ' + revAmt + ' ' + e.fromCurrency + '</span>'
+                        + '<span class="timestamp">' + new Date(e.timestamp).toLocaleString() + '</span>'
+                        + '</div>'
+                        + '<button class="btn btn-danger btn-xs del-btn" data-idx="' + ri + '" title="Delete">\u2715</button>'
+                        + '</div>';
+                }).join('');
+                historyList.querySelectorAll('.del-btn').forEach(function (b) {
+                    b.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        deleteHistoryEntry(parseInt(b.dataset.idx));
+                    });
+                });
+            }
+            function deleteHistoryEntry(idx) { history.splice(idx, 1); saveHistory(); renderHistory(); updateAddButtonState(); }
+
+            function clearAllHistory() {
+                if (!confirm('Delete ALL history entries? This cannot be undone.')) return;
+                history = [];
+                saveHistory();
+                renderHistory();
+                updateAddButtonState();
+            }
+
+            function addToHistory(autoMode) {
+                var amt = parseFloat(amountInput.value);
+                var from = fromCurrency.value;
+                var to = toCurrency.value;
+                if (isNaN(amt) || amt <= 0) { if (!autoMode) amountInput.focus(); return; }
+                var factor = getEffectiveFactor(from, to);
+                if (factor === null) { if (!autoMode) return; else return; }
+
+                var toAmount = parseFloat((amt * factor).toFixed(2));
+                history.push({
+                    fromCurrency: from, toCurrency: to,
+                    fromAmount: parseFloat(amt.toFixed(2)), toAmount: toAmount,
+                    timestamp: Date.now()
+                });
+                saveHistory(); renderHistory();
+
+                if (!autoMode) {
+                    // Manual add: clear input + hide conversion
+                    amountInput.value = '';
+                    conversionDisplay.style.display = 'none';
+                    clearAutoAddTimer();
+                    amountInput.focus();
+                }
+                // Auto mode: keep the amount and conversion visible, just add to history silently
+                updateAddButtonState();
+            }
+
+            // --- Swap ---
+            function swapCurrencies() {
+                var tmp = fromCurrency.value;
+                fromCurrency.value = toCurrency.value;
+                toCurrency.value = tmp;
+                saveSelectedCurrencies();
+                convert(); amountInput.focus();
+            }
+
+            // --- Export/Import ---
+            function exportData() {
+                var data = { version: 3, exportedAt: new Date().toISOString(), pairs: pairs, history: history, ratesCache: ratesCache };
+                var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'currency-export-' + new Date().toISOString().slice(0, 10) + '.json';
+                a.click(); URL.revokeObjectURL(a.href);
+            }
+
+            function importData(file) {
+                if (!confirm('Import will REPLACE all current pairs, history, and rate cache. Continue?')) {
+                    if (file === importFileInput) importFileInput.value = ''; return;
+                }
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        var data = JSON.parse(e.target.result);
+                        if (!data || typeof data !== 'object') throw new Error('Invalid');
+                        if (Array.isArray(data.pairs) && data.pairs.length) {
+                            pairs = data.pairs.filter(function (p) { return p.from && p.to && typeof p.factor === 'number'; }).map(function (p) {
+                                return {
+                                    from: p.from.toUpperCase(), to: p.to.toUpperCase(), factor: p.factor,
+                                    mode: p.mode || 'manual', cachedRate: p.cachedRate || null, cachedRateDate: p.cachedRateDate || null
+                                };
+                            });
+                            if (pairs.length === 0) pairs = DEFAULT_PAIRS.slice();
+                            savePairs(); populateCurrencyDropdowns();
+                        }
+                        if (Array.isArray(data.history)) {
+                            history = data.history.filter(function (h) {
+                                return h.fromCurrency && h.toCurrency && typeof h.fromAmount === 'number' && typeof h.toAmount === 'number';
+                            }).map(function (h) {
+                                return { fromCurrency: h.fromCurrency, toCurrency: h.toCurrency, fromAmount: h.fromAmount, toAmount: h.toAmount, timestamp: h.timestamp || Date.now() };
+                            });
+                            saveHistory(); renderHistory();
+                        }
+                        if (data.ratesCache && typeof data.ratesCache === 'object') {
+                            ratesCache = data.ratesCache;
+                            saveRatesCache();
+                        }
+                        convert();
+                        alert('Import complete!');
+                    } catch (err) { alert('Import failed: invalid file format.'); }
+                };
+                reader.readAsText(file);
+                importFileInput.value = '';
+            }
+
+            function triggerImport() {
+                importFileInput.click();
+            }
+
+            // --- Pairs modal ---
+            function showSuggestions(input, dropdown) {
+                var val = input.value.toUpperCase().trim();
+                if (!val || val.length === 0) { dropdown.innerHTML = ''; dropdown.classList.remove('open'); return; }
+                var matches = [];
+                var max = 8;
+                for (var code in ECB_CURRENCIES) {
+                    if (code.indexOf(val) === 0 || ECB_CURRENCIES[code].toUpperCase().indexOf(val) >= 0) {
+                        matches.push(code);
+                        if (matches.length >= max) break;
+                    }
+                }
+                if (matches.length === 0) { dropdown.classList.remove('open'); return; }
+                dropdown.innerHTML = matches.map(function (c) {
+                    return '<div class="sug-item" data-code="' + c + '"><span class="sug-code">' + c + '</span><span class="sug-name">' + ECB_CURRENCIES[c] + '</span></div>';
+                }).join('');
+                dropdown.classList.add('open');
+                dropdown.querySelectorAll('.sug-item').forEach(function (item) {
+                    item.addEventListener('mousedown', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                    item.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        input.value = item.dataset.code;
+                        dropdown.classList.remove('open');
+                        input.focus();
+                        updateAutoModeToggle();
+                    });
+                });
+            }
+
+            function updateAutoModeToggle() {
+                var from = newFrom.value.trim().toUpperCase();
+                var to = newTo.value.trim().toUpperCase();
+                var bothECB = isECBCurrency(from) && isECBCurrency(to);
+                newAutoMode.disabled = !bothECB;
+                if (!bothECB) newAutoMode.checked = false;
+            }
+
+            newFrom.addEventListener('input', function () { showSuggestions(newFrom, sugFrom); updateAutoModeToggle(); });
+            newTo.addEventListener('input', function () { showSuggestions(newTo, sugTo); updateAutoModeToggle(); });
+            newFrom.addEventListener('focus', function () { showSuggestions(newFrom, sugFrom); updateAutoModeToggle(); });
+            newTo.addEventListener('focus', function () { showSuggestions(newTo, sugTo); updateAutoModeToggle(); });
+
+            // Close suggestions on outside click (but NOT on the input itself)
+            document.addEventListener('mousedown', function (e) {
+                if (!newFrom.contains(e.target) && !sugFrom.contains(e.target)) sugFrom.classList.remove('open');
+                if (!newTo.contains(e.target) && !sugTo.contains(e.target)) sugTo.classList.remove('open');
+            });
+
+            function openPairsModal() {
+                dupWarningBox.innerHTML = '';
+                newFrom.value = ''; newTo.value = ''; newFactor.value = '';
+                newAutoMode.checked = true; newAutoMode.disabled = false;
+                addPairBtn.textContent = 'Add';
+                renderPairList();
+                pairsModal.classList.remove('hidden');
+                newFrom.focus();
+            }
+            function closePairsModalFn() { pairsModal.classList.add('hidden'); }
+
+            function switchPairToAuto(idx) {
+                if (!isECBCurrency(pairs[idx].from) || !isECBCurrency(pairs[idx].to)) return;
+                pairs[idx].mode = 'auto';
+                savePairs();
+                populateCurrencyDropdowns();
+                renderPairList();
+                fetchAllECBRates(function () {
+                    populateCurrencyDropdowns();
+                    renderPairList();
+                    convert();
+                });
+            }
+
+            function renderPairList() {
+                if (pairs.length === 0) { pairList.innerHTML = '<div class="empty-state">No pairs. Add one below.</div>'; return; }
+                pairList.innerHTML = pairs.map(function (p, i) {
+                    var modeLabel = p.mode === 'auto' ? 'auto' : 'manual';
+                    var canAuto = isECBCurrency(p.from) && isECBCurrency(p.to);
+                    var cacheInfo = '';
+                    if (p.mode === 'auto' && p.cachedRateDate) {
+                        cacheInfo = ' <span class="pair-factor">(cached ' + new Date(p.cachedRateDate).toLocaleDateString() + ')</span>';
+                    }
+                    var autoBtn = '';
+                    if (p.mode === 'manual' && canAuto) {
+                        autoBtn = '<button class="btn btn-ghost btn-xs auto-switch-btn" data-auto="' + i + '" title="Switch to auto">\u21BA</button>';
+                    }
+                    return '<div class="pair-row">'
+                        + '<span class="pair-label">' + p.from + ' \u2192 ' + p.to + '</span>'
+                        + '<span class="pair-mode ' + modeLabel + '">' + modeLabel + '</span>'
+                        + '<span class="pair-factor" id="factorLabel' + i + '">\u00D7' + p.factor + '</span>' + cacheInfo
+                        + '<input type="number" class="edit-factor" id="factorInput' + i + '" value="' + p.factor + '" step="any" min="0.000001" style="display:none">'
+                        + '<button class="btn btn-ghost btn-xs edit-btn" data-edit="' + i + '" title="Edit">\u270E</button>'
+                        + autoBtn
+                        + '<button class="btn btn-danger btn-xs" data-del="' + i + '" title="Delete">\u2715</button>'
+                        + '</div>';
+                }).join('');
+
+                pairList.querySelectorAll('[data-del]').forEach(function (b) {
+                    b.addEventListener('click', function () {
+                        pairs.splice(parseInt(b.dataset.del), 1);
+                        savePairs(); populateCurrencyDropdowns(); renderPairList(); convert();
+                    });
+                });
+                pairList.querySelectorAll('.edit-btn').forEach(function (b) {
+                    b.addEventListener('click', function () {
+                        startEditingPair(parseInt(b.dataset.edit));
+                    });
+                });
+                pairList.querySelectorAll('.auto-switch-btn').forEach(function (b) {
+                    b.addEventListener('click', function () {
+                        switchPairToAuto(parseInt(b.dataset.auto));
+                    });
+                });
+            }
+
+            function startEditingPair(idx) {
+                var label = document.getElementById('factorLabel' + idx);
+                var input = document.getElementById('factorInput' + idx);
+                var editBtns = pairList.querySelectorAll('.edit-btn');
+                var editBtn = null;
+                editBtns.forEach(function (b) { if (parseInt(b.dataset.edit) === idx) editBtn = b; });
+                if (!editBtn) return;
+
+                if (input.style.display === 'none') {
+                    label.style.display = 'none';
+                    input.style.display = '';
+                    input.focus(); input.select();
+                    editBtn.textContent = '\u2713';
+                    editBtn.classList.remove('btn-ghost');
+                    editBtn.classList.add('btn-primary');
+
+                    var save = function () {
+                        var v = parseFloat(input.value);
+                        if (!isNaN(v) && v > 0) {
+                            pairs[idx].factor = v;
+                            pairs[idx].mode = 'manual';
+                            savePairs(); populateCurrencyDropdowns(); renderPairList(); convert();
+                        }
+                    };
+                    input.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); save(); } };
+                    input.onblur = function () { save(); };
+                }
+            }
+
+            function addOrEditPair() {
+                var from = newFrom.value.trim().toUpperCase();
+                var to = newTo.value.trim().toUpperCase();
+                var factor = parseFloat(newFactor.value);
+                var autoMode = newAutoMode.checked && !newAutoMode.disabled;
+
+                if (!from || !to) return;
+                if (from === to) return;
+
+                dupWarningBox.innerHTML = '';
+
+                var existingIdx = -1;
+                for (var i = 0; i < pairs.length; i++) {
+                    if (pairs[i].from === from && pairs[i].to === to) { existingIdx = i; break; }
+                }
+
+                if (existingIdx >= 0) {
+                    dupWarningBox.innerHTML = '<div class="dup-warning">'
+                        + '<span>\u26A0\uFE0F Pair <b>' + from + '\u2192' + to + '</b> already exists (\u00D7' + pairs[existingIdx].factor + ').</span>'
+                        + '<button class="btn btn-primary btn-xs" id="editExistingBtn">Edit existing</button>'
+                        + '<button class="btn btn-ghost btn-xs" id="dismissDupBtn">Dismiss</button>'
+                        + '</div>';
+                    document.getElementById('editExistingBtn').addEventListener('click', function () {
+                        dupWarningBox.innerHTML = '';
+                        pairs.splice(existingIdx, 1);
+                        addPairBtn.click();
+                    });
+                    document.getElementById('dismissDupBtn').addEventListener('click', function () {
+                        dupWarningBox.innerHTML = '';
+                    });
+                    return;
+                }
+
+                if (autoMode) {
+                    pairs.push({ from: from, to: to, factor: 1, mode: 'auto', cachedRate: null, cachedRateDate: null });
+                } else {
+                    if (isNaN(factor) || factor <= 0) return;
+                    pairs.push({ from: from, to: to, factor: factor, mode: 'manual', cachedRate: null, cachedRateDate: null });
+                }
+                savePairs(); populateCurrencyDropdowns(); renderPairList();
+                newFrom.value = ''; newTo.value = ''; newFactor.value = '';
+                newAutoMode.checked = true; newAutoMode.disabled = false;
+                newFrom.focus();
+
+                if (autoMode) {
+                    fetchAllECBRates(function () {
+                        populateCurrencyDropdowns();
+                        renderPairList();
+                        convert();
+                    });
+                } else {
+                    convert();
+                }
+            }
+
+            // --- Event listeners ---
+            amountInput.addEventListener('input', function () {
+                convert();
+                if (autoAddEnabled && amountInput.value && parseFloat(amountInput.value) > 0 && !isAlreadyInHistory()) {
+                    resetAutoAddTimer();
+                } else {
+                    clearAutoAddTimer();
+                }
+            });
+            fromCurrency.addEventListener('change', function () { saveSelectedCurrencies(); convert(); });
+            toCurrency.addEventListener('change', function () { saveSelectedCurrencies(); convert(); });
+            addHistoryBtn.addEventListener('click', function () {
+                clearAutoAddTimer();
+                addToHistory(false);
+            });
+            clearHistoryBtn.addEventListener('click', clearAllHistory);
+            swapBtnInline.addEventListener('click', swapCurrencies);
+            themeBtn.addEventListener('click', cycleTheme);
+
+            // Settings
+            settingsBtn.addEventListener('click', openSettingsModal);
+            closeSettingsModal.addEventListener('click', closeSettingsModalFn);
+            settingsModal.addEventListener('click', function (e) { if (e.target === settingsModal) closeSettingsModalFn(); });
+
+            // Settings modal buttons
+            refreshRatesSettingsBtn.addEventListener('click', function () {
+                closeSettingsModalFn();
+                fetchAllECBRates();
+            });
+            exportSettingsBtn.addEventListener('click', exportData);
+            importSettingsBtn.addEventListener('click', triggerImport);
+
+            importFileInput.addEventListener('change', function (e) { if (e.target.files[0]) importData(e.target.files[0]); });
+            managePairsBtn.addEventListener('click', openPairsModal);
+            closePairsModal.addEventListener('click', closePairsModalFn);
+            addPairBtn.addEventListener('click', addOrEditPair);
+
+            amountInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') { e.preventDefault(); clearAutoAddTimer(); addToHistory(false); }
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') {
+                    if (!pairsModal.classList.contains('hidden')) closePairsModalFn();
+                    if (!settingsModal.classList.contains('hidden')) closeSettingsModalFn();
+                }
+            });
+            pairsModal.addEventListener('click', function (e) { if (e.target === pairsModal) closePairsModalFn(); });
+
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(function () { });
+            }
+
+            // --- Init ---
+            loadTheme(); applyTheme();
+            loadSelectedCurrencies();
+            loadSettings();
+            loadRatesCache();
+            loadPairs(); loadHistory();
+            populateCurrencyDropdowns(); renderHistory();
+            updateAddButtonState();
+            amountInput.focus();
+
+            // Fetch rates on startup for auto pairs
+            var hasAuto = pairs.some(function (p) { return p.mode === 'auto'; });
+            if (hasAuto) {
+                setTimeout(function () { fetchAllECBRates(); }, 500);
+            }
+        })();
+    </script>
+
+</body>
+
+</html>

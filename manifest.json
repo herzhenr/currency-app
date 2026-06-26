@@ -1,0 +1,19 @@
+{
+  "name": "Currency Converter",
+  "short_name": "Currency",
+  "description": "Offline currency converter with history and custom pairs",
+  "start_url": "/currency-app/",
+  "scope": "/currency-app/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#4f6ef7",
+  "background_color": "#f0f2f5",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%234f6ef7'/%3E%3Ctext x='256' y='360' font-size='320' text-anchor='middle' fill='white'%3E💱%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
