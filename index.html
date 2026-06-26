@@ -303,13 +303,29 @@
 
         .add-btn-row {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             margin-top: 8px;
             align-items: center
         }
 
+        .rate-inline {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .rate-inline .rate-line {
+            font-size: .72rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
         .add-btn-row .btn-primary {
-            flex: 1
+            flex-shrink: 0;
         }
 
         .history-header {
@@ -802,6 +818,10 @@
                 </div>
 
                 <div class="add-btn-row">
+                    <div class="rate-inline" id="rateInline">
+                        <div class="rate-line" id="rateLine1"></div>
+                        <div class="rate-line" id="rateLine2"></div>
+                    </div>
                     <button type="submit" class="btn btn-primary" id="addHistoryBtn">Add to History</button>
                 </div>
             </form>
@@ -950,6 +970,8 @@
                 forwardDesc = $('#forwardDesc'), forwardVal = $('#forwardVal'),
                 reverseDesc = $('#reverseDesc'), reverseVal = $('#reverseVal'),
                 addHistoryBtn = $('#addHistoryBtn'), rateBadge = $('#rateBadge'),
+                rateInline = $('#rateInline'),
+                rateLine1 = $('#rateLine1'), rateLine2 = $('#rateLine2'),
                 converterForm = $('#converterForm'),
                 historyList = $('#historyList'), historyCount = $('#historyCount'),
                 clearHistoryBtn = $('#clearHistoryBtn'),
@@ -1331,6 +1353,7 @@
 
                 if (isNaN(amount) || amount <= 0 || !from || !to) {
                     conversionDisplay.style.display = 'none';
+                    updateRateInline();
                     updateAddButtonState();
                     return;
                 }
@@ -1341,6 +1364,7 @@
                     reverseDesc.textContent = '1 ' + to + ' \u2192 ? ' + from;
                     reverseVal.textContent = 'No rate';
                     conversionDisplay.style.display = '';
+                    updateRateInline();
                     updateAddButtonState();
                     return;
                 }
@@ -1356,7 +1380,24 @@
                 reverseVal.textContent = rev + ' ' + from;
                 conversionDisplay.style.display = '';
 
+                updateRateInline();
+
                 updateAddButtonState();
+            }
+
+            function updateRateInline() {
+                var from = fromCurrency.value;
+                var to = toCurrency.value;
+                if (!from || !to) { rateLine1.textContent = ''; rateLine2.textContent = ''; return; }
+                var factor = getEffectiveFactor(from, to);
+                var revFactor = getEffectiveFactor(to, from);
+                if (factor === null) {
+                    rateLine1.textContent = from + ' \u2192 ' + to + ': no rate';
+                    rateLine2.textContent = '';
+                    return;
+                }
+                rateLine1.textContent = '1 ' + from + ' = ' + factor.toFixed(4) + ' ' + to;
+                rateLine2.textContent = revFactor ? '1 ' + to + ' = ' + revFactor.toFixed(4) + ' ' + from : '';
             }
 
             // --- History ---
@@ -1773,6 +1814,7 @@
             loadRatesCache();
             loadPairs(); loadHistory();
             populateCurrencyDropdowns(); renderHistory();
+            updateRateInline();
             updateAddButtonState();
             amountInput.focus();
 
