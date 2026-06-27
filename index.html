@@ -131,8 +131,8 @@
         }
 
         .amount-input {
-            flex: 1 1 55px;
-            min-width: 45px;
+            flex: 1 1 auto;
+            min-width: 60px;
             height: 42px;
             font-size: 1.1rem;
             font-weight: 600;
@@ -156,12 +156,13 @@
         }
 
         .currency-select {
-            flex: 1 1 50px;
-            min-width: 42px;
+            flex: 0 0 auto;
+            min-width: 44px;
+            width: auto;
             height: 42px;
-            font-size: .82rem;
+            font-size: .78rem;
             font-weight: 600;
-            padding: 0 22px 0 7px;
+            padding: 0 18px 0 5px;
             border: 2px solid var(--input-border);
             border-radius: 8px;
             background: var(--input-bg);
@@ -225,12 +226,13 @@
 
         .conv-cell .conv-desc {
             font-weight: 600;
-            color: var(--accent);
+            color: var(--text);
             white-space: nowrap
         }
 
         .conv-cell .conv-val {
-            font-weight: 700
+            font-weight: 700;
+            color: var(--accent);
         }
 
         .btn {
@@ -305,7 +307,8 @@
             display: flex;
             gap: 8px;
             margin-top: 8px;
-            align-items: center
+            align-items: stretch;
+            justify-content: space-between;
         }
 
         .rate-inline {
@@ -313,19 +316,26 @@
             min-width: 0;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
+            align-items: flex-start;
         }
 
-        .rate-inline .rate-line {
-            font-size: .72rem;
-            color: var(--text-secondary);
+        .rate-tag {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 14px;
+            font-size: .7rem;
+            font-weight: 500;
+            background: var(--badge-bg);
+            color: var(--text);
             white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
+            letter-spacing: -.01em;
         }
 
         .add-btn-row .btn-primary {
             flex-shrink: 0;
+            align-self: stretch;
+            white-space: nowrap;
         }
 
         .history-header {
@@ -366,65 +376,61 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            padding: 6px 8px;
+            padding: 8px 10px;
             border-radius: 8px;
             border: 1px solid transparent;
             transition: border var(--transition), background var(--transition);
             font-size: .78rem;
+            cursor: pointer;
         }
 
         .history-item:hover {
-            background: var(--row-hover)
+            background: var(--row-hover);
+            border-color: var(--border);
         }
 
         .history-item .entry {
             flex: 1;
             min-width: 0;
             display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .history-item .entry .hist-main {
+            display: flex;
             align-items: center;
-            gap: 5px;
-            flex-wrap: wrap
+            gap: 6px;
         }
 
         .history-item .entry .hist-amount {
             font-weight: 700;
-            white-space: nowrap
+            font-size: .85rem;
+            color: var(--text);
         }
 
-        .history-item .entry .hist-from {
-            font-weight: 600;
+        .history-item .entry .hist-ccy {
             color: var(--accent);
-            white-space: nowrap
+            font-weight: 600;
         }
 
-        .history-item .entry .hist-arrow {
+        .history-item .entry .hist-sep {
             color: var(--text-secondary);
             font-size: .7rem;
-            margin: 0 1px
-        }
-
-        .history-item .entry .hist-to {
-            font-weight: 600;
-            white-space: nowrap
-        }
-
-        .history-item .entry .hist-divider {
-            color: var(--text-secondary);
+            opacity: .5;
             margin: 0 2px;
-            font-size: .65rem
         }
 
-        .history-item .entry .hist-rev {
-            font-size: .72rem;
-            color: var(--text-secondary);
-            white-space: nowrap
+        .history-item .entry .hist-val {
+            font-weight: 600;
+            white-space: nowrap;
+            color: var(--text);
         }
 
-        .history-item .timestamp {
+        .history-item .entry .hist-timestamp {
             font-size: .6rem;
             color: var(--text-secondary);
             white-space: nowrap;
-            margin-left: auto
         }
 
         .del-btn {
@@ -674,15 +680,20 @@
 
         .add-pair-form {
             display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .add-pair-form .pair-cc-row {
+            display: flex;
             gap: 5px;
-            flex-wrap: wrap;
-            align-items: center
+            align-items: center;
         }
 
         .add-pair-form .cc-wrapper {
             position: relative;
-            flex: 1 1 60px;
-            min-width: 50px
+            flex: 1 1 70px;
+            min-width: 55px
         }
 
         .add-pair-form input {
@@ -708,14 +719,61 @@
         }
 
         .add-pair-form input.fac {
-            width: 75px;
-            flex-shrink: 1
+            height: 36px;
+            padding: 0 8px;
+            border: 2px solid var(--input-border);
+            border-radius: 7px;
+            background: var(--input-bg);
+            color: var(--text);
+            font-size: .82rem;
+            outline: none;
+            transition: border var(--transition);
+            width: 100%;
         }
 
         .add-pair-form .arr {
             color: var(--text-secondary);
             font-weight: 700;
             font-size: .85rem
+        }
+
+        .add-pair-form .pair-actions-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .add-pair-form .pair-actions-row .segmented-btn {
+            margin-right: auto;
+        }
+
+        .pair-section-title {
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 10px 0 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pair-section-title:first-child {
+            margin-top: 0;
+        }
+
+        .validation-error {
+            color: var(--danger);
+            font-size: .72rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .validation-error.visible {
+            display: block;
+        }
+
+        .add-pair-form input.input-error {
+            border-color: var(--danger);
         }
 
         .add-pair-form .suggestions {
@@ -764,6 +822,100 @@
             gap: 8px;
             justify-content: flex-end;
             margin-top: 8px
+        }
+
+        .segmented-btn {
+            display: inline-flex;
+            border-radius: 7px;
+            overflow: hidden;
+            border: 2px solid var(--input-border);
+            flex-shrink: 0;
+        }
+
+        .segmented-btn button {
+            padding: 6px 14px;
+            border: none;
+            cursor: pointer;
+            font-size: .76rem;
+            font-weight: 600;
+            background: var(--input-bg);
+            color: var(--text);
+            transition: background var(--transition), color var(--transition);
+            min-height: 32px;
+        }
+
+        .segmented-btn button:first-child {
+            border-right: 1px solid var(--input-border);
+        }
+
+        .segmented-btn button:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .segmented-btn button.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .fac-row {
+            display: none;
+        }
+
+        .fac-row.visible {
+            display: flex;
+        }
+
+        /* Detail modal */
+        .detail-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .detail-block {
+            background: var(--input-bg);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .detail-block .detail-amount {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .detail-block .detail-label {
+            font-size: .7rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .detail-rates {
+            display: flex;
+            gap: 8px;
+        }
+
+        .detail-rates .detail-rate-tag {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: var(--badge-bg);
+            border-radius: 8px;
+            font-size: .75rem;
+            font-weight: 500;
+        }
+
+        .detail-rates .detail-rate-tag .rate-num {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .detail-timestamp {
+            text-align: center;
+            font-size: .68rem;
+            color: var(--text-secondary);
         }
 
         .dup-warning {
@@ -819,8 +971,6 @@
 
                 <div class="add-btn-row">
                     <div class="rate-inline" id="rateInline">
-                        <div class="rate-line" id="rateLine1"></div>
-                        <div class="rate-line" id="rateLine2"></div>
                     </div>
                     <button type="submit" class="btn btn-primary" id="addHistoryBtn">Add to History</button>
                 </div>
@@ -915,6 +1065,11 @@
                         <button type="button" class="btn btn-ghost btn-small" id="importSettingsBtn">&#x1F4E5;
                             Import</button>
                     </div>
+                    <div class="settings-row">
+                        <div class="set-label">Reset all data</div>
+                        <button type="button" class="btn btn-danger btn-small" id="resetDataBtn">&#x1F5D1;
+                            Reset</button>
+                    </div>
                 </div>
             </div><!-- /modal-body -->
 
@@ -929,32 +1084,51 @@
         <div class="modal">
             <h2>&#x1F504; Currency Pairs</h2>
             <div class="modal-body">
+                <div class="pair-section-title">Available Pairs</div>
                 <div id="dupWarningBox"></div>
                 <div class="pair-list" id="pairList"></div>
+                <div class="pair-section-title">Add New Pair</div>
                 <div class="add-pair-form">
-                    <div class="cc-wrapper">
-                        <input type="text" class="cc" id="newFrom" placeholder="EUR" maxlength="5" autocomplete="off">
-                        <div class="suggestions" id="sugFrom"></div>
+                    <div class="pair-cc-row">
+                        <div class="cc-wrapper">
+                            <input type="text" class="cc" id="newFrom" placeholder="EUR" maxlength="5"
+                                autocomplete="off">
+                            <div class="suggestions" id="sugFrom"></div>
+                        </div>
+                        <span class="arr">&rarr;</span>
+                        <div class="cc-wrapper">
+                            <input type="text" class="cc" id="newTo" placeholder="SEK" maxlength="5" autocomplete="off">
+                            <div class="suggestions" id="sugTo"></div>
+                        </div>
                     </div>
-                    <span class="arr">&rarr;</span>
-                    <div class="cc-wrapper">
-                        <input type="text" class="cc" id="newTo" placeholder="SEK" maxlength="5" autocomplete="off">
-                        <div class="suggestions" id="sugTo"></div>
+                    <div class="pair-actions-row">
+                        <div class="segmented-btn" id="modeSegmented">
+                            <button type="button" class="active" data-mode="auto">Auto</button>
+                            <button type="button" data-mode="manual">Manual</button>
+                        </div>
+                        <div class="fac-row" id="facRow">
+                            <input type="number" class="fac" id="newFactor" placeholder="Factor" step="any"
+                                min="0.000001">
+                        </div>
+                        <button type="button" class="btn btn-primary btn-small" id="addPairBtn">Add</button>
                     </div>
-                    <span>=</span>
-                    <input type="number" class="fac" id="newFactor" placeholder="Factor" step="any" min="0.000001">
-                    <div class="toggle-row" style="margin:0;gap:4px;">
-                        <label class="toggle" style="width:34px;height:20px;">
-                            <input type="checkbox" id="newAutoMode" checked>
-                            <span class="slider"></span>
-                        </label>
-                        <span class="toggle-label" style="font-size:.72rem;">Auto</span>
-                    </div>
-                    <button type="button" class="btn btn-primary btn-small" id="addPairBtn">Add</button>
+                    <div class="validation-error" id="pairValidationError"></div>
                 </div>
             </div><!-- /modal-body -->
             <div class="modal-actions">
                 <button type="button" class="btn btn-ghost btn-small" id="closePairsModal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay hidden" id="detailModal">
+        <div class="modal">
+            <h2>&#x1F4CA; Conversion Detail</h2>
+            <div class="modal-body" id="detailBody">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost btn-small" id="closeDetailModal">Close</button>
             </div>
         </div>
     </div>
@@ -971,7 +1145,6 @@
                 reverseDesc = $('#reverseDesc'), reverseVal = $('#reverseVal'),
                 addHistoryBtn = $('#addHistoryBtn'), rateBadge = $('#rateBadge'),
                 rateInline = $('#rateInline'),
-                rateLine1 = $('#rateLine1'), rateLine2 = $('#rateLine2'),
                 converterForm = $('#converterForm'),
                 historyList = $('#historyList'), historyCount = $('#historyCount'),
                 clearHistoryBtn = $('#clearHistoryBtn'),
@@ -980,13 +1153,18 @@
                 feePercent = $('#feePercent'), feeAutoToggle = $('#feeAutoToggle'), feeManualToggle = $('#feeManualToggle'),
                 refreshRatesSettingsBtn = $('#refreshRatesSettingsBtn'),
                 exportSettingsBtn = $('#exportSettingsBtn'), importSettingsBtn = $('#importSettingsBtn'),
+                resetDataBtn = $('#resetDataBtn'),
                 closeSettingsModal = $('#closeSettingsModal'),
                 managePairsBtn = $('#managePairsBtn'), importFileInput = $('#importFileInput'),
                 pairsModal = $('#pairsModal'), pairList = $('#pairList'), dupWarningBox = $('#dupWarningBox'),
                 newFrom = $('#newFrom'), newTo = $('#newTo'), newFactor = $('#newFactor'),
-                newAutoMode = $('#newAutoMode'), addPairBtn = $('#addPairBtn'),
+                modeSegmented = $('#modeSegmented'), facRow = $('#facRow'),
+                pairValidationError = $('#pairValidationError'),
+                addPairBtn = $('#addPairBtn'),
                 closePairsModal = $('#closePairsModal'),
-                sugFrom = $('#sugFrom'), sugTo = $('#sugTo');
+                sugFrom = $('#sugFrom'), sugTo = $('#sugTo'),
+                detailModal = $('#detailModal'), detailBody = $('#detailBody'),
+                closeDetailModal = $('#closeDetailModal');
 
             var STORAGE_PAIRS = 'currency_app_pairs_v3';
             var STORAGE_HISTORY = 'currency_app_history_v3';
@@ -994,6 +1172,8 @@
             var STORAGE_SETTINGS = 'currency_app_settings_v2';
             var STORAGE_RATES_CACHE = 'currency_app_rates_cache';
             var STORAGE_CURRENCIES = 'currency_app_currencies';
+            var STORAGE_CROSS_RATES = 'currency_app_cross_rates';
+            var STORAGE_ECB_LIST = 'currency_app_ecb_list';
 
             var pairs = [], history = [], currentTheme = 'system';
             var autoAddEnabled = true;
@@ -1002,17 +1182,16 @@
             var lastSelectedFrom = 'EUR', lastSelectedTo = 'USD';
 
             var ECB_CURRENCIES = {
-                AUD: 'Australian Dollar', BGN: 'Bulgarian Lev', BRL: 'Brazilian Real',
-                CAD: 'Canadian Dollar', CHF: 'Swiss Franc', CNY: 'Chinese Yuan',
-                CZK: 'Czech Koruna', DKK: 'Danish Krone', GBP: 'British Pound',
-                HKD: 'Hong Kong Dollar', HUF: 'Hungarian Forint', IDR: 'Indonesian Rupiah',
-                ILS: 'Israeli Shekel', INR: 'Indian Rupee', ISK: 'Icelandic Krona',
-                JPY: 'Japanese Yen', KRW: 'South Korean Won', MXN: 'Mexican Peso',
-                MYR: 'Malaysian Ringgit', NOK: 'Norwegian Krone', NZD: 'New Zealand Dollar',
-                PHP: 'Philippine Peso', PLN: 'Polish Zloty', RON: 'Romanian Leu',
-                SEK: 'Swedish Krona', SGD: 'Singapore Dollar', THB: 'Thai Baht',
-                TRY: 'Turkish Lira', USD: 'US Dollar', ZAR: 'South African Rand',
-                EUR: 'Euro'
+                EUR: 'Euro', USD: 'US Dollar', GBP: 'British Pound', JPY: 'Japanese Yen',
+                CHF: 'Swiss Franc', SEK: 'Swedish Krona', NOK: 'Norwegian Krone', DKK: 'Danish Krone',
+                CAD: 'Canadian Dollar', AUD: 'Australian Dollar', NZD: 'New Zealand Dollar',
+                PLN: 'Polish Zloty', CZK: 'Czech Koruna', HUF: 'Hungarian Forint',
+                RON: 'Romanian Leu', BGN: 'Bulgarian Lev', TRY: 'Turkish Lira',
+                CNY: 'Chinese Yuan', INR: 'Indian Rupee', KRW: 'South Korean Won',
+                SGD: 'Singapore Dollar', HKD: 'Hong Kong Dollar', ZAR: 'South African Rand',
+                MXN: 'Mexican Peso', BRL: 'Brazilian Real', THB: 'Thai Baht',
+                IDR: 'Indonesian Rupiah', MYR: 'Malaysian Ringgit', PHP: 'Philippine Peso',
+                ILS: 'Israeli Shekel', ISK: 'Icelandic Krona'
             };
 
             var DEFAULT_PAIRS = [
@@ -1185,7 +1364,7 @@
 
             function isECBCurrency(code) { return !!ECB_CURRENCIES[code]; }
 
-            // Fetch available currency list from ECB API (merges with hardcoded fallback)
+            // Fetch available currency list from ECB API
             function fetchAvailableCurrencies() {
                 var url = 'https://data-api.ecb.europa.eu/service/data/EXR/D..EUR.SP00.A?format=jsondata&lastNObservations=1';
                 fetch(url).then(function (r) {
@@ -1193,14 +1372,27 @@
                     return r.json();
                 }).then(function (data) {
                     try {
-                        var seriesKeys = Object.keys(data.structure.dimensions.series[1].values);
-                        seriesKeys.forEach(function (code) {
-                            if (code !== 'EUR' && !ECB_CURRENCIES[code]) {
-                                ECB_CURRENCIES[code] = code;
+                        // SDMX-JSON: series dimension values are keyed by numeric index, each has .id
+                        if (data.structure && data.structure.dimensions && data.structure.dimensions.series) {
+                            var dims = data.structure.dimensions.series;
+                            for (var d = 0; d < dims.length; d++) {
+                                if (dims[d].values) {
+                                    var vals = dims[d].values;
+                                    Object.keys(vals).forEach(function (k) {
+                                        var entry = vals[k];
+                                        if (entry && entry.id && entry.id.length === 3 && entry.id !== 'EUR') {
+                                            if (!ECB_CURRENCIES[entry.id] || ECB_CURRENCIES[entry.id] === entry.id) {
+                                                ECB_CURRENCIES[entry.id] = entry.name || entry.id;
+                                            }
+                                        }
+                                    });
+                                }
                             }
-                        });
-                    } catch (e) { /* keep hardcoded list */ }
-                }).catch(function () { /* keep hardcoded list */ });
+                        }
+                        saveECBList();
+                        updateModeSegmented();
+                    } catch (e) { /* keep current list */ }
+                }).catch(function () { /* keep current list */ });
             }
 
             function fetchECBRate(currency, callback) {
@@ -1244,8 +1436,8 @@
                 var currencies = [];
                 pairs.forEach(function (p) {
                     if (p.mode === 'auto') {
-                        if (isECBCurrency(p.from) && p.from !== 'EUR') currencies.push(p.from);
-                        if (isECBCurrency(p.to) && p.to !== 'EUR') currencies.push(p.to);
+                        if (p.from !== 'EUR') currencies.push(p.from);
+                        if (p.to !== 'EUR') currencies.push(p.to);
                     }
                 });
                 var unique = {};
@@ -1279,7 +1471,7 @@
 
             function applyRatesToPairs() {
                 pairs.forEach(function (p) {
-                    if (p.mode === 'auto' && isECBCurrency(p.from) && isECBCurrency(p.to)) {
+                    if (p.mode === 'auto') {
                         var rateFrom = 1, rateTo = 1;
                         if (p.from === 'EUR') rateFrom = 1;
                         else if (ratesCache[p.from] && ratesCache[p.from].rate) rateFrom = ratesCache[p.from].rate;
@@ -1296,12 +1488,57 @@
                 savePairs();
             }
 
+            // --- Cross-rates cache for unadded pairs ---
+            var crossRatesCache = {};
+            function loadECBList() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_ECB_LIST);
+                    if (raw) {
+                        var list = JSON.parse(raw);
+                        if (list && typeof list === 'object') {
+                            // Merge saved list into current (preserving hardcoded names)
+                            Object.keys(list).forEach(function (k) {
+                                if (!ECB_CURRENCIES[k] || ECB_CURRENCIES[k] === k) {
+                                    ECB_CURRENCIES[k] = list[k];
+                                }
+                            });
+                        }
+                    }
+                } catch (e) { }
+            }
+            function saveECBList() { localStorage.setItem(STORAGE_ECB_LIST, JSON.stringify(ECB_CURRENCIES)); }
+            function loadCrossRates() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_CROSS_RATES);
+                    if (raw) crossRatesCache = JSON.parse(raw);
+                } catch (e) { crossRatesCache = {}; }
+            }
+            function saveCrossRates() { localStorage.setItem(STORAGE_CROSS_RATES, JSON.stringify(crossRatesCache)); }
+            function getCrossRate(fromCur, toCur) {
+                var key = fromCur + '_' + toCur;
+                if (crossRatesCache[key] && (Date.now() - crossRatesCache[key].ts) < 3600000) {
+                    return crossRatesCache[key].rate;
+                }
+                var rateFrom = fromCur === 'EUR' ? 1 : (ratesCache[fromCur] && ratesCache[fromCur].rate);
+                var rateTo = toCur === 'EUR' ? 1 : (ratesCache[toCur] && ratesCache[toCur].rate);
+                if (rateFrom && rateTo) {
+                    var computed = rateTo / rateFrom;
+                    crossRatesCache[key] = { rate: computed, ts: Date.now() };
+                    saveCrossRates();
+                    return computed;
+                }
+                return null;
+            }
+
             // --- Currency helpers ---
             function getEffectiveFactor(fromCur, toCur) {
                 var direct = pairs.find(function (p) { return p.from === fromCur && p.to === toCur; });
                 if (direct) return applyFeeToFactor(direct.factor, direct.mode);
                 var rev = pairs.find(function (p) { return p.from === toCur && p.to === fromCur; });
                 if (rev) return applyFeeToFactor(1 / rev.factor, rev.mode);
+                // Try cross-rate via ECB cache
+                var cross = getCrossRate(fromCur, toCur);
+                if (cross !== null) return applyFeeToFactor(cross, 'auto');
                 return null;
             }
 
@@ -1310,6 +1547,8 @@
                 if (direct) return direct.mode || 'manual';
                 var rev = pairs.find(function (p) { return p.from === toCur && p.to === fromCur; });
                 if (rev) return rev.mode || 'manual';
+                // Cross-rate mode is auto
+                if (getCrossRate(fromCur, toCur) !== null) return 'auto';
                 return null;
             }
 
@@ -1325,7 +1564,13 @@
             function getAllCurrencies() {
                 var set = {};
                 pairs.forEach(function (p) { set[p.from] = 1; set[p.to] = 1; });
-                return Object.keys(set).sort();
+                var list = Object.keys(set).sort();
+                // Move EUR and USD to front
+                var eurIdx = list.indexOf('EUR');
+                if (eurIdx > 0) { list.splice(eurIdx, 1); list.unshift('EUR'); }
+                var usdIdx = list.indexOf('USD');
+                if (usdIdx > 1) { list.splice(usdIdx, 1); list.splice(1, 0, 'USD'); }
+                return list;
             }
 
             function populateCurrencyDropdowns() {
@@ -1388,16 +1633,18 @@
             function updateRateInline() {
                 var from = fromCurrency.value;
                 var to = toCurrency.value;
-                if (!from || !to) { rateLine1.textContent = ''; rateLine2.textContent = ''; return; }
+                if (!from || !to) { rateInline.innerHTML = ''; return; }
                 var factor = getEffectiveFactor(from, to);
                 var revFactor = getEffectiveFactor(to, from);
                 if (factor === null) {
-                    rateLine1.textContent = from + ' \u2192 ' + to + ': no rate';
-                    rateLine2.textContent = '';
+                    rateInline.innerHTML = '<span class="rate-tag">' + from + ' \u2192 ' + to + ': no rate</span>';
                     return;
                 }
-                rateLine1.textContent = '1 ' + from + ' = ' + factor.toFixed(4) + ' ' + to;
-                rateLine2.textContent = revFactor ? '1 ' + to + ' = ' + revFactor.toFixed(4) + ' ' + from : '';
+                var html = '<span class="rate-tag">1 ' + from + ' = ' + factor.toFixed(4) + ' ' + to + '</span>';
+                if (revFactor) {
+                    html += '<span class="rate-tag">1 ' + to + ' = ' + revFactor.toFixed(4) + ' ' + from + '</span>';
+                }
+                rateInline.innerHTML = html;
             }
 
             // --- History ---
@@ -1409,22 +1656,28 @@
                 }
                 historyList.innerHTML = history.slice().reverse().map(function (e, idx) {
                     var ri = history.length - 1 - idx;
-                    var factor = getEffectiveFactor(e.fromCurrency, e.toCurrency);
                     var revFactor = getEffectiveFactor(e.toCurrency, e.fromCurrency);
-                    var revAmt = (revFactor && typeof e.fromAmount === 'number') ? (e.fromAmount * revFactor).toFixed(2) : '\u2014';
-                    return '<div class="history-item">'
+                    var revAmount = revFactor ? (parseFloat(e.fromAmount) * revFactor).toFixed(2) : '\u2014';
+                    return '<div class="history-item" data-idx="' + ri + '">'
                         + '<div class="entry">'
+                        + '<div class="hist-main">'
                         + '<span class="hist-amount">' + (typeof e.fromAmount === 'number' ? e.fromAmount.toFixed(2) : e.fromAmount) + '</span>'
-                        + '<span class="hist-from">' + e.fromCurrency + '</span>'
-                        + '<span class="hist-arrow">\u2192</span>'
-                        + '<span class="hist-to">' + (typeof e.toAmount === 'number' ? e.toAmount.toFixed(2) : e.toAmount) + ' ' + e.toCurrency + '</span>'
-                        + '<span class="hist-divider">|</span>'
-                        + '<span class="hist-rev">' + (typeof e.fromAmount === 'number' ? e.fromAmount.toFixed(2) : e.fromAmount) + ' ' + e.toCurrency + ' \u2192 ' + revAmt + ' ' + e.fromCurrency + '</span>'
-                        + '<span class="timestamp">' + new Date(e.timestamp).toLocaleString() + '</span>'
+                        + '<span class="hist-sep">|</span>'
+                        + '<span class="hist-val">' + (typeof e.toAmount === 'number' ? e.toAmount.toFixed(2) : e.toAmount) + ' <span class="hist-ccy">' + e.toCurrency + '</span></span>'
+                        + '<span class="hist-sep">|</span>'
+                        + '<span class="hist-val">' + revAmount + ' <span class="hist-ccy">' + e.fromCurrency + '</span></span>'
+                        + '</div>'
+                        + '<div class="hist-timestamp">' + new Date(e.timestamp).toLocaleString() + '</div>'
                         + '</div>'
                         + '<button type="button" class="btn btn-danger btn-xs del-btn" data-idx="' + ri + '" title="Delete">\u2715</button>'
                         + '</div>';
                 }).join('');
+                historyList.querySelectorAll('.history-item').forEach(function (item) {
+                    item.addEventListener('click', function (e) {
+                        if (e.target.closest('.del-btn')) return;
+                        openDetailModal(parseInt(item.dataset.idx));
+                    });
+                });
                 historyList.querySelectorAll('.del-btn').forEach(function (b) {
                     b.addEventListener('click', function (e) {
                         e.stopPropagation();
@@ -1480,7 +1733,7 @@
 
             // --- Export/Import ---
             function exportData() {
-                var data = { version: 3, exportedAt: new Date().toISOString(), pairs: pairs, history: history, ratesCache: ratesCache };
+                var data = { version: 4, exportedAt: new Date().toISOString(), pairs: pairs, history: history, ratesCache: ratesCache, crossRatesCache: crossRatesCache };
                 var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 var a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
@@ -1519,6 +1772,10 @@
                             ratesCache = data.ratesCache;
                             saveRatesCache();
                         }
+                        if (data.crossRatesCache && typeof data.crossRatesCache === 'object') {
+                            crossRatesCache = data.crossRatesCache;
+                            saveCrossRates();
+                        }
                         convert();
                         alert('Import complete!');
                     } catch (err) { alert('Import failed: invalid file format.'); }
@@ -1529,6 +1786,33 @@
 
             function triggerImport() {
                 importFileInput.click();
+            }
+
+            function resetAllData() {
+                if (!confirm('This will DELETE all pairs, history, cached rates, and settings. This cannot be undone. Continue?')) return;
+                localStorage.removeItem(STORAGE_PAIRS);
+                localStorage.removeItem(STORAGE_HISTORY);
+                localStorage.removeItem(STORAGE_RATES_CACHE);
+                localStorage.removeItem(STORAGE_CROSS_RATES);
+                localStorage.removeItem(STORAGE_ECB_LIST);
+                localStorage.removeItem(STORAGE_SETTINGS);
+                localStorage.removeItem(STORAGE_CURRENCIES);
+                pairs = DEFAULT_PAIRS.slice();
+                history = [];
+                ratesCache = {};
+                crossRatesCache = {};
+                autoAddEnabled = true;
+                feePercentVal = 0; feeAutoEnabled = true; feeManualEnabled = true;
+                autoAddToggle.checked = true;
+                feePercent.value = 0;
+                feeAutoToggle.checked = true;
+                feeManualToggle.checked = true;
+                lastSelectedFrom = 'EUR'; lastSelectedTo = 'USD';
+                savePairs(); saveHistory(); saveRatesCache(); saveCrossRates(); saveSettings();
+                saveSelectedCurrencies();
+                populateCurrencyDropdowns(); renderHistory(); convert();
+                updateRateInline(); updateAddButtonState();
+                closeSettingsModalFn();
             }
 
             // --- Pairs modal ---
@@ -1545,7 +1829,9 @@
                 }
                 if (matches.length === 0) { dropdown.classList.remove('open'); return; }
                 dropdown.innerHTML = matches.map(function (c) {
-                    return '<div class="sug-item" data-code="' + c + '"><span class="sug-code">' + c + '</span><span class="sug-name">' + ECB_CURRENCIES[c] + '</span></div>';
+                    var name = ECB_CURRENCIES[c] || '';
+                    var nameHtml = name && name !== c ? '<span class="sug-name">' + name + '</span>' : '';
+                    return '<div class="sug-item" data-code="' + c + '"><span class="sug-code">' + c + '</span>' + nameHtml + '</div>';
                 }).join('');
 
                 // Position the dropdown fixed below the input
@@ -1565,23 +1851,62 @@
                         input.value = item.dataset.code;
                         dropdown.classList.remove('open');
                         input.focus();
-                        updateAutoModeToggle();
+                        updateModeSegmented();
                     });
                 });
             }
 
-            function updateAutoModeToggle() {
+            function updateModeSegmented() {
                 var from = newFrom.value.trim().toUpperCase();
                 var to = newTo.value.trim().toUpperCase();
-                var bothECB = isECBCurrency(from) && isECBCurrency(to);
-                newAutoMode.disabled = !bothECB;
-                if (!bothECB) newAutoMode.checked = false;
+                var autoBtn = modeSegmented.querySelector('[data-mode="auto"]');
+                var manualBtn = modeSegmented.querySelector('[data-mode="manual"]');
+                var bothFilled = from.length > 0 && to.length > 0;
+                if (!bothFilled) {
+                    autoBtn.disabled = true;
+                    manualBtn.disabled = true;
+                    return;
+                }
+                autoBtn.disabled = false;
+                manualBtn.disabled = false;
+                var bothECB = isECBCurrency(from) && isECBCurrency(to) && from !== 'EUR' ? true : isECBCurrency(from) && isECBCurrency(to);
+                if (bothECB) {
+                    setSegmentedMode('auto');
+                } else {
+                    setSegmentedMode('manual');
+                }
             }
 
-            newFrom.addEventListener('input', function () { showSuggestions(newFrom, sugFrom); updateAutoModeToggle(); });
-            newTo.addEventListener('input', function () { showSuggestions(newTo, sugTo); updateAutoModeToggle(); });
-            newFrom.addEventListener('focus', function () { showSuggestions(newFrom, sugFrom); updateAutoModeToggle(); });
-            newTo.addEventListener('focus', function () { showSuggestions(newTo, sugTo); updateAutoModeToggle(); });
+            function setSegmentedMode(mode) {
+                var autoBtn = modeSegmented.querySelector('[data-mode="auto"]');
+                var manualBtn = modeSegmented.querySelector('[data-mode="manual"]');
+                if (mode === 'auto') {
+                    autoBtn.classList.add('active');
+                    manualBtn.classList.remove('active');
+                    facRow.classList.remove('visible');
+                    newFactor.value = '';
+                } else {
+                    manualBtn.classList.add('active');
+                    autoBtn.classList.remove('active');
+                    facRow.classList.add('visible');
+                }
+            }
+
+            function getCurrentMode() {
+                return modeSegmented.querySelector('.active').dataset.mode;
+            }
+
+            // Segmented button clicks
+            modeSegmented.addEventListener('click', function (e) {
+                var btn = e.target.closest('button');
+                if (!btn || btn.disabled) return;
+                setSegmentedMode(btn.dataset.mode);
+            });
+
+            newFrom.addEventListener('input', function () { showSuggestions(newFrom, sugFrom); updateModeSegmented(); });
+            newTo.addEventListener('input', function () { showSuggestions(newTo, sugTo); updateModeSegmented(); });
+            newFrom.addEventListener('focus', function () { showSuggestions(newFrom, sugFrom); updateModeSegmented(); });
+            newTo.addEventListener('focus', function () { showSuggestions(newTo, sugTo); updateModeSegmented(); });
 
             // Close suggestions on outside click (but NOT on the input itself)
             document.addEventListener('mousedown', function (e) {
@@ -1591,8 +1916,16 @@
 
             function openPairsModal() {
                 dupWarningBox.innerHTML = '';
+                pairValidationError.textContent = '';
+                pairValidationError.classList.remove('visible');
+                newFrom.classList.remove('input-error');
+                newTo.classList.remove('input-error');
                 newFrom.value = ''; newTo.value = ''; newFactor.value = '';
-                newAutoMode.checked = true; newAutoMode.disabled = false;
+                setSegmentedMode('auto');
+                var autoBtn = modeSegmented.querySelector('[data-mode="auto"]');
+                var manualBtn = modeSegmented.querySelector('[data-mode="manual"]');
+                autoBtn.disabled = true;
+                manualBtn.disabled = true;
                 addPairBtn.textContent = 'Add';
                 renderPairList();
                 pairsModal.classList.remove('hidden');
@@ -1600,8 +1933,35 @@
             }
             function closePairsModalFn() { pairsModal.classList.add('hidden'); }
 
+            // --- Detail modal ---
+            function openDetailModal(idx) {
+                var e = history[idx];
+                if (!e) return;
+                var factor = getEffectiveFactor(e.fromCurrency, e.toCurrency);
+                var revFactor = getEffectiveFactor(e.toCurrency, e.fromCurrency);
+                var amt = typeof e.fromAmount === 'number' ? e.fromAmount.toFixed(2) : e.fromAmount;
+                var revAmt = revFactor ? (parseFloat(amt) * revFactor).toFixed(2) : '\u2014';
+                var html = '<div class="detail-grid">'
+                    + '<div class="detail-block">'
+                    + '<div class="detail-amount">' + amt + ' ' + e.fromCurrency + ' \u2192 ' + (typeof e.toAmount === 'number' ? e.toAmount.toFixed(2) : e.toAmount) + ' ' + e.toCurrency + '</div>'
+                    + '<div class="detail-label">' + e.fromCurrency + ' \u2192 ' + e.toCurrency + '</div>'
+                    + '</div>'
+                    + '<div class="detail-block">'
+                    + '<div class="detail-amount">' + amt + ' ' + e.toCurrency + ' \u2192 ' + revAmt + ' ' + e.fromCurrency + '</div>'
+                    + '<div class="detail-label">' + e.toCurrency + ' \u2192 ' + e.fromCurrency + '</div>'
+                    + '</div>'
+                    + '<div class="detail-rates">'
+                    + '<div class="detail-rate-tag">1 ' + e.fromCurrency + ' = <span class="rate-num">' + (factor ? factor.toFixed(6) : '\u2014') + '</span> ' + e.toCurrency + '</div>'
+                    + '<div class="detail-rate-tag">1 ' + e.toCurrency + ' = <span class="rate-num">' + (revFactor ? revFactor.toFixed(6) : '\u2014') + '</span> ' + e.fromCurrency + '</div>'
+                    + '</div>'
+                    + '<div class="detail-timestamp">' + new Date(e.timestamp).toLocaleString() + '</div>'
+                    + '</div>';
+                detailBody.innerHTML = html;
+                detailModal.classList.remove('hidden');
+            }
+            function closeDetailModalFn() { detailModal.classList.add('hidden'); }
+
             function switchPairToAuto(idx) {
-                if (!isECBCurrency(pairs[idx].from) || !isECBCurrency(pairs[idx].to)) return;
                 pairs[idx].mode = 'auto';
                 savePairs();
                 populateCurrencyDropdowns();
@@ -1613,25 +1973,33 @@
                 });
             }
 
+            function swapPairDirection(idx) {
+                var p = pairs[idx];
+                var tmp = p.from;
+                p.from = p.to;
+                p.to = tmp;
+                p.factor = parseFloat((1 / p.factor).toFixed(6));
+                savePairs();
+                populateCurrencyDropdowns();
+                renderPairList();
+                convert();
+            }
+
             function renderPairList() {
                 if (pairs.length === 0) { pairList.innerHTML = '<div class="empty-state">No pairs. Add one below.</div>'; return; }
                 pairList.innerHTML = pairs.map(function (p, i) {
                     var modeLabel = p.mode === 'auto' ? 'auto' : 'manual';
-                    var canAuto = isECBCurrency(p.from) && isECBCurrency(p.to);
-                    var cacheInfo = '';
-                    if (p.mode === 'auto' && p.cachedRateDate) {
-                        cacheInfo = ' <span class="pair-factor">(cached ' + new Date(p.cachedRateDate).toLocaleDateString() + ')</span>';
-                    }
                     var autoBtn = '';
-                    if (p.mode === 'manual' && canAuto) {
+                    if (p.mode === 'manual') {
                         autoBtn = '<button type="button" class="btn btn-ghost btn-xs auto-switch-btn" data-auto="' + i + '" title="Switch to auto">\u21BA</button>';
                     }
                     return '<div class="pair-row">'
                         + '<span class="pair-label">' + p.from + ' \u2192 ' + p.to + '</span>'
                         + '<span class="pair-mode ' + modeLabel + '">' + modeLabel + '</span>'
-                        + '<span class="pair-factor" id="factorLabel' + i + '">\u00D7' + p.factor + '</span>' + cacheInfo
+                        + '<span class="pair-factor" id="factorLabel' + i + '">\u00D7' + p.factor + '</span>'
                         + '<input type="number" class="edit-factor" id="factorInput' + i + '" value="' + p.factor + '" step="any" min="0.000001" style="display:none">'
                         + '<button type="button" class="btn btn-ghost btn-xs edit-btn" data-edit="' + i + '" title="Edit">\u270E</button>'
+                        + '<button type="button" class="btn btn-ghost btn-xs swap-pair-btn" data-swap="' + i + '" title="Swap direction">\u21C4</button>'
                         + autoBtn
                         + '<button type="button" class="btn btn-danger btn-xs" data-del="' + i + '" title="Delete">\u2715</button>'
                         + '</div>';
@@ -1651,6 +2019,11 @@
                 pairList.querySelectorAll('.auto-switch-btn').forEach(function (b) {
                     b.addEventListener('click', function () {
                         switchPairToAuto(parseInt(b.dataset.auto));
+                    });
+                });
+                pairList.querySelectorAll('.swap-pair-btn').forEach(function (b) {
+                    b.addEventListener('click', function () {
+                        swapPairDirection(parseInt(b.dataset.swap));
                     });
                 });
             }
@@ -1687,17 +2060,53 @@
             function addOrEditPair() {
                 var from = newFrom.value.trim().toUpperCase();
                 var to = newTo.value.trim().toUpperCase();
+                var mode = getCurrentMode();
+                var autoMode = mode === 'auto';
                 var factor = parseFloat(newFactor.value);
-                var autoMode = newAutoMode.checked && !newAutoMode.disabled;
 
-                if (!from || !to) return;
-                if (from === to) return;
+                // Validation
+                pairValidationError.textContent = '';
+                pairValidationError.classList.remove('visible');
+                newFrom.classList.remove('input-error');
+                newTo.classList.remove('input-error');
+                newFactor.classList.remove('input-error');
+
+                var hasError = false;
+                if (!from) {
+                    pairValidationError.textContent = 'Please enter a source currency.';
+                    pairValidationError.classList.add('visible');
+                    newFrom.classList.add('input-error');
+                    hasError = true;
+                }
+                if (!to) {
+                    if (!hasError) pairValidationError.textContent = 'Please enter a target currency.';
+                    else pairValidationError.textContent = 'Please enter both source and target currencies.';
+                    pairValidationError.classList.add('visible');
+                    newTo.classList.add('input-error');
+                    hasError = true;
+                }
+                if (hasError) return;
+                if (from === to) {
+                    pairValidationError.textContent = 'Source and target currencies must be different.';
+                    pairValidationError.classList.add('visible');
+                    newFrom.classList.add('input-error');
+                    newTo.classList.add('input-error');
+                    return;
+                }
+                if (!autoMode && (isNaN(factor) || factor <= 0)) {
+                    pairValidationError.textContent = 'Please enter a valid exchange factor.';
+                    pairValidationError.classList.add('visible');
+                    newFactor.classList.add('input-error');
+                    return;
+                }
 
                 dupWarningBox.innerHTML = '';
 
                 var existingIdx = -1;
+                var reverseIdx = -1;
                 for (var i = 0; i < pairs.length; i++) {
                     if (pairs[i].from === from && pairs[i].to === to) { existingIdx = i; break; }
+                    if (pairs[i].from === to && pairs[i].to === from) { reverseIdx = i; }
                 }
 
                 if (existingIdx >= 0) {
@@ -1717,15 +2126,38 @@
                     return;
                 }
 
+                if (reverseIdx >= 0) {
+                    dupWarningBox.innerHTML = '<div class="dup-warning">'
+                        + '<span>\u26A0\uFE0F Reverse pair <b>' + pairs[reverseIdx].from + '\u2192' + pairs[reverseIdx].to + '</b> exists.</span>'
+                        + '<button type="button" class="btn btn-primary btn-xs" id="swapExistingBtn">Swap direction</button>'
+                        + '<button type="button" class="btn btn-ghost btn-xs" id="dismissDupBtn">Dismiss</button>'
+                        + '</div>';
+                    document.getElementById('swapExistingBtn').addEventListener('click', function () {
+                        dupWarningBox.innerHTML = '';
+                        swapPairDirection(reverseIdx);
+                        newFrom.value = ''; newTo.value = ''; newFactor.value = '';
+                        setSegmentedMode('auto');
+                        modeSegmented.querySelector('[data-mode="auto"]').disabled = false;
+                        newFrom.focus();
+                    });
+                    document.getElementById('dismissDupBtn').addEventListener('click', function () {
+                        dupWarningBox.innerHTML = '';
+                    });
+                    return;
+                }
+
                 if (autoMode) {
                     pairs.push({ from: from, to: to, factor: 1, mode: 'auto', cachedRate: null, cachedRateDate: null });
                 } else {
-                    if (isNaN(factor) || factor <= 0) return;
                     pairs.push({ from: from, to: to, factor: factor, mode: 'manual', cachedRate: null, cachedRateDate: null });
                 }
                 savePairs(); populateCurrencyDropdowns(); renderPairList();
                 newFrom.value = ''; newTo.value = ''; newFactor.value = '';
-                newAutoMode.checked = true; newAutoMode.disabled = false;
+                setSegmentedMode('auto');
+                var autoBtn = modeSegmented.querySelector('[data-mode="auto"]');
+                var manualBtn = modeSegmented.querySelector('[data-mode="manual"]');
+                autoBtn.disabled = true;
+                manualBtn.disabled = true;
                 newFrom.focus();
 
                 if (autoMode) {
@@ -1775,10 +2207,12 @@
             });
             exportSettingsBtn.addEventListener('click', exportData);
             importSettingsBtn.addEventListener('click', triggerImport);
+            resetDataBtn.addEventListener('click', resetAllData);
 
             importFileInput.addEventListener('change', function (e) { if (e.target.files[0]) importData(e.target.files[0]); });
             managePairsBtn.addEventListener('click', openPairsModal);
             closePairsModal.addEventListener('click', closePairsModalFn);
+            closeDetailModal.addEventListener('click', closeDetailModalFn);
             addPairBtn.addEventListener('click', addOrEditPair);
 
             amountInput.addEventListener('keydown', function (e) {
@@ -1797,11 +2231,13 @@
             });
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
+                    if (!detailModal.classList.contains('hidden')) closeDetailModalFn();
                     if (!pairsModal.classList.contains('hidden')) closePairsModalFn();
                     if (!settingsModal.classList.contains('hidden')) closeSettingsModalFn();
                 }
             });
             pairsModal.addEventListener('click', function (e) { if (e.target === pairsModal) closePairsModalFn(); });
+            detailModal.addEventListener('click', function (e) { if (e.target === detailModal) closeDetailModalFn(); });
 
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js').catch(function () { });
@@ -1811,7 +2247,9 @@
             loadTheme(); applyTheme();
             loadSelectedCurrencies();
             loadSettings();
+            loadECBList();
             loadRatesCache();
+            loadCrossRates();
             loadPairs(); loadHistory();
             populateCurrencyDropdowns(); renderHistory();
             updateRateInline();
@@ -1821,11 +2259,11 @@
             // Fetch rates on startup for auto pairs
             var hasAuto = pairs.some(function (p) { return p.mode === 'auto'; });
             if (hasAuto) {
-                setTimeout(function () { fetchAllECBRates(); }, 500);
+                fetchAllECBRates();
             }
 
             // Fetch available currencies from ECB API (updates suggestion list)
-            setTimeout(function () { fetchAvailableCurrencies(); }, 200);
+            fetchAvailableCurrencies();
         })();
     </script>
 
